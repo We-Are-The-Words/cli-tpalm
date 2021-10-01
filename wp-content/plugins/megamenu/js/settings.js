@@ -11,7 +11,7 @@ jQuery(function ($) {
     }
 
     $('input.mega-setting-responsive_breakpoint').on("keyup", function() {
-        if ( $(this).val() == '0px') {
+        if ( $(this).val() == '0px' || $(this).val() == '0') {
             $('.mega-tab-content-mobile_menu').addClass('mega-mobile-disabled');
         } else {
             $('.mega-tab-content-mobile_menu').removeClass('mega-mobile-disabled');
@@ -30,26 +30,28 @@ jQuery(function ($) {
         }
     });
 
-    if ($('#codemirror').length) {
-        var codeMirror = CodeMirror.fromTextArea(document.getElementById('codemirror'), {
-            tabMode: 'indent',
-            lineNumbers: true,
-            lineWrapping: true,
-            viewportMargin: Infinity,
-            onChange: function(cm) {
-                cm.save();
-            }
-        });
-    }
-
-    $('[data-tab="mega-tab-content-custom_styling"]').on('click', function() {
-        setTimeout( function() {
-            $('.mega-tab-content-custom_styling').find('.CodeMirror').each(function(key, value) {
-                value.CodeMirror.refresh();
-            });
-        }, 160);
+    $('.menu_settings_menu_locations .mega-enabled input[type="checkbox"]').on("change", function() {
+        if ( $(this).is(":checked")) {
+            $(this).closest('.mega-location').removeClass('mega-location-disabled').addClass('mega-location-enabled');
+        } else {
+            $(this).closest('.mega-location').removeClass('mega-location-enabled').addClass('mega-location-disabled');
+        }
     });
 
+    if (typeof wp.codeEditor !== 'undefined' && typeof cm_settings !== 'undefined') {
+        if ($('#codemirror').length) {
+            wp.codeEditor.initialize($('#codemirror'), cm_settings);
+        }
+
+        $('[data-tab="mega-tab-content-custom_styling"]').on('click', function() {
+            setTimeout( function() {
+                $('.mega-tab-content-custom_styling').find('.CodeMirror').each(function(key, value) {
+                    value.CodeMirror.refresh();
+                });
+            }, 160);
+        });
+    }
+    
     $(".mm_colorpicker").spectrum({
         preferredFormat: "rgb",
         showInput: true,
@@ -57,7 +59,7 @@ jQuery(function ($) {
         clickoutFiresChange: true,
         showSelectionPalette: true,
         showPalette: true,
-        palette: [ ],
+        palette: $.isArray(megamenu_spectrum_settings.palette) ? megamenu_spectrum_settings.palette : [],
         localStorageKey: "maxmegamenu.themeeditor",
         change: function(color) {
             if (color.getAlpha() === 0) {
@@ -118,15 +120,15 @@ jQuery(function ($) {
         selected_tab.siblings().removeClass('nav-tab-active');
         selected_tab.addClass('nav-tab-active');
         var content_to_show = $(this).attr('data-tab');
-        $('.mega-tab-content').hide();
-        $('.' + content_to_show).show();
+        $(this).parent().parent().find('.mega-tab-content').hide();
+        $(this).parent().parent().find('.' + content_to_show).show();
     });
 
     $(".theme_editor").on("submit", function(e) {
         e.preventDefault();
         $(".theme_result_message").remove();
-        $(".spinner").css('visibility', 'visible').css('display', 'block');
-        $("input#submit").attr('disabled', 'disabled');
+        var original_value = $("input#submit").attr('value');
+        $("input#submit").addClass('is-busy').attr('value', megamenu_settings.saving + "…");
         var memory_limit_link = $("<a>").attr('href', megamenu_settings.increase_memory_limit_url).html(megamenu_settings.increase_memory_limit_anchor_text);
 
         $.ajax({
@@ -163,8 +165,7 @@ jQuery(function ($) {
 
             },
             complete: function() {
-                $(".spinner").hide();
-                $("input#submit").removeAttr('disabled');
+                $("input#submit").removeClass('is-busy').attr('value', original_value);
             }
         });
 
@@ -204,7 +205,7 @@ jQuery(function ($) {
             }
 
             if ( ( validation == 'int' && Math.floor(value) != value )
-              || ( validation == 'px' && ! ( value.substr(value.length - 2) == 'px' || value.substr(value.length - 2) == 'em' || value.substr(value.length - 2) == 'vh' || value.substr(value.length - 2) == 'vw' || value.substr(value.length - 2) == 'pt' || value.substr(value.length - 3) == 'rem' || value.substr(value.length - 1) == '%' ) && value != 0 )
+              || ( validation == 'px' && ! ( value.substr(value.length - 2) == 'px' || value.substr(value.length - 2) == 'em' || value.substr(value.length - 2) == 'vh' || value.substr(value.length - 2) == 'vw' || value.substr(value.length - 2) == 'pt' || value.substr(value.length - 3) == 'rem' || value.substr(value.length - 1) == '%' ) && value != 0 && value != 'normal' && value != 'inherit' )
               || ( validation == 'float' && ! $.isNumeric(value) ) ) {
                 label.addClass('mega-error');
                 error_message.show();
@@ -217,4 +218,49 @@ jQuery(function ($) {
 
     });
 
+    $(".mega-accordion-title").on('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        var title = $(this);
+        var content = title.next('.mega-accordion-content');
+
+        $(".mega-accordion-content:visible").slideUp('fast');
+
+        if ( content.is(':hidden') ) {
+            content.slideDown('fast', function() {
+                title.addClass('mega-accordion-open');
+            });
+        } else {
+            content.slideUp('fast', function() {
+                title.removeClass('mega-accordion-open');
+            });
+        }
+    });
+
+    $(".mega-ellipsis").on('click', function(e) {
+        e.stopPropagation();
+
+        var ellipsis = $(this);
+
+        $(".mega-ellipsis").not(ellipsis).removeClass('mega-ellipsis-open');
+
+        if ( ellipsis.hasClass('mega-ellipsis-open') ) {
+            ellipsis.removeClass('mega-ellipsis-open');
+        } else {
+            ellipsis.addClass('mega-ellipsis-open');
+        }
+    });
+
+    $(document).on("click", function(e) { // hide menu when clicked away from
+        if ( ! $(e.target).closest(".mega-ellipsis").length ) {
+            $(".mega-ellipsis").removeClass('mega-ellipsis-open');
+        }
+    });
+
+    $('.megamenu-edit-theme').on("click", function() {
+        var url = $(this).siblings("select").find(":selected").attr('data-url');
+        window.location.href = url;
+    });
+    
 });
