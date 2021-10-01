@@ -53,6 +53,8 @@ class Red_Item_Sanitize {
 		// Auto-migrate the regex to the source flags
 		$data['match_data'] = [ 'source' => [ 'flag_regex' => $data['regex'] === 1 ? true : false ] ];
 
+		$flags = new Red_Source_Flags();
+
 		// Set flags
 		if ( isset( $details['match_data'] ) && isset( $details['match_data']['source'] ) ) {
 			$defaults = red_get_options();
@@ -70,6 +72,11 @@ class Red_Item_Sanitize {
 			$data['match_data']['source'] = [];
 		}
 
+		if ( isset( $details['match_data']['options'] ) && is_array( $details['match_data']['options'] ) ) {
+			$source = new Red_Source_Options( $details['match_data']['options'] );
+			$data['match_data']['options'] = $source->get_json();
+		}
+
 		$data['match_data'] = array_filter( $data['match_data'] );
 
 		if ( empty( $data['match_data'] ) ) {
@@ -85,12 +92,25 @@ class Red_Item_Sanitize {
 		$data['match_type'] = isset( $details['match_type'] ) ? $details['match_type'] : 'url';
 		$data['url'] = $this->get_url( $url, $data['regex'] );
 
-		if ( ! is_wp_error( $data['url'] ) ) {
-			$data['match_url'] = new Red_Url_Match( $data['url'] );
-			$data['match_url'] = $data['match_url']->get_url();
+		if ( isset( $details['hits'] ) ) {
+			$data['last_count'] = intval( $details['hits'], 10 );
 		}
 
-		$data['title'] = isset( $details['title'] ) ? $details['title'] : null;
+		if ( isset( $details['last_access'] ) ) {
+			$data['last_access'] = date( 'Y-m-d H:i:s', strtotime( $details['last_access'] ) );
+		}
+
+		if ( ! is_wp_error( $data['url'] ) ) {
+			$matcher = new Red_Url_Match( $data['url'] );
+			$data['match_url'] = $matcher->get_url();
+
+			// If 'exact order' then save the match URL with query params
+			if ( $flags->is_query_exact_order() ) {
+				$data['match_url'] = $matcher->get_url_with_params();
+			}
+		}
+
+		$data['title'] = ! empty( $details['title'] ) ? $details['title'] : null;
 		$data['group_id'] = $this->get_group( isset( $details['group_id'] ) ? $details['group_id'] : 0 );
 		$data['position'] = $this->get_position( $details );
 
@@ -100,18 +120,22 @@ class Red_Item_Sanitize {
 		}
 
 		if ( $data['title'] ) {
-			$data['title'] = substr( $data['title'], 0, 500 );
+			$data['title'] = trim( substr( $data['title'], 0, 500 ) );
+
+			if ( strlen( $data['title'] ) === 0 ) {
+				$data['title'] = null;
+			}
 		}
 
 		$matcher = Red_Match::create( isset( $details['match_type'] ) ? $details['match_type'] : false );
 		if ( ! $matcher ) {
-			return new WP_Error( 'redirect', __( 'Invalid redirect matcher', 'redirection' ) );
+			return new WP_Error( 'redirect', 'Invalid redirect matcher' );
 		}
 
 		$action_code = isset( $details['action_code'] ) ? intval( $details['action_code'], 10 ) : 0;
 		$action = Red_Action::create( isset( $details['action_type'] ) ? $details['action_type'] : false, $action_code );
 		if ( ! $action ) {
-			return new WP_Error( 'redirect', __( 'Invalid redirect action', 'redirection' ) );
+			return new WP_Error( 'redirect', 'Invalid redirect action' );
 		}
 
 		$data['action_type'] = $details['action_type'];
@@ -148,9 +172,17 @@ class Red_Item_Sanitize {
 		return false;
 	}
 
+	public function is_valid_redirect_code( $code ) {
+		return in_array( $code, array( 301, 302, 303, 304, 307, 308 ), true );
+	}
+
+	public function is_valid_error_code( $code ) {
+		return in_array( $code, array( 400, 401, 403, 404, 410, 418, 451, 500, 501, 502, 503, 504 ), true );
+	}
+
 	protected function get_code( $action_type, $code ) {
 		if ( $action_type === 'url' || $action_type === 'random' ) {
-			if ( in_array( $code, array( 301, 302, 303, 304, 307, 308 ), true ) ) {
+			if ( $this->is_valid_redirect_code( $code ) ) {
 				return $code;
 			}
 
@@ -158,7 +190,7 @@ class Red_Item_Sanitize {
 		}
 
 		if ( $action_type === 'error' ) {
-			if ( in_array( $code, array( 400, 401, 403, 404, 410, 418 ), true ) ) {
+			if ( $this->is_valid_error_code( $code ) ) {
 				return $code;
 			}
 
@@ -172,7 +204,7 @@ class Red_Item_Sanitize {
 		$group_id = intval( $group_id, 10 );
 
 		if ( ! Red_Group::get( $group_id ) ) {
-			return new WP_Error( 'redirect', __( 'Invalid group when creating redirect', 'redirection' ) );
+			return new WP_Error( 'redirect', 'Invalid group when creating redirect' );
 		}
 
 		return $group_id;
@@ -182,7 +214,7 @@ class Red_Item_Sanitize {
 		$url = self::sanitize_url( $url, $regex );
 
 		if ( $url === '' ) {
-			return new WP_Error( 'redirect', __( 'Invalid source URL', 'redirection' ) );
+			return new WP_Error( 'redirect', 'Invalid source URL' );
 		}
 
 		return $url;
@@ -217,14 +249,37 @@ class Red_Item_Sanitize {
 			$url = '/' . $url;
 		}
 
-		// Ensure we URL decode any i10n characters
-		$url = rawurldecode( $url );
+		// Try and URL decode any i10n characters
+		$decoded = $this->remove_bad_encoding( rawurldecode( $url ) );
 
-		// Try and remove bad decoding
-		if ( function_exists( 'iconv' ) ) {
-			$url = @iconv( 'UTF-8', 'UTF-8//IGNORE', $url );
+		// Was there any invalid characters?
+		if ( $decoded === false ) {
+			// Yes. Use the url as an undecoded URL, and check for invalid characters
+			$decoded = $this->remove_bad_encoding( $url );
+
+			// Was there any invalid characters?
+			if ( $decoded === false ) {
+				// Yes, it's still a problem. Use the URL as-is and hope for the best
+				return $url;
+			}
 		}
 
-		return $url;
+		// Return the URL
+		return $decoded;
+	}
+
+	/**
+	 * Remove any bad encoding, where possible
+	 *
+	 * @param string $text Text.
+	 * @return string|false
+	 */
+	private function remove_bad_encoding( $text ) {
+		// Try and remove bad decoding
+		if ( function_exists( 'iconv' ) ) {
+			return @iconv( 'UTF-8', 'UTF-8//IGNORE', $text );
+		}
+
+		return $text;
 	}
 }
