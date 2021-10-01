@@ -4,11 +4,11 @@
   Plugin URI: http://www.codeandmore.com/products/wordpress-plugins/wp-page-widget/
   Description: Allow users to customize Widgets per page.
   Author: CodeAndMore
-  Version: 3.5
+  Version: 3.9
   Author URI: http://www.codeandmore.com/
  */
 
-define('PAGE_WIDGET_VERSION', '3.5');
+define('PAGE_WIDGET_VERSION', '3.9');
 
 /* Hooks */
 add_action('plugins_loaded', 'pw_load_plugin_textdomain');
@@ -70,12 +70,7 @@ function pw_init() {
 function pw_print_script_template() {
 	global $pagenow, $typenow;
 
-	if (
-			in_array($pagenow, array('post-new.php', 'post.php', 'edit-tags.php', 'term.php'))
-			||
-			// Page widget config for front page, search page
-			( in_array($pagenow, array('admin.php')) && (($_GET['page'] == 'pw-front-page') || ($_GET['page'] == 'pw-search-page')) )
-	) {
+	if (pw_backend_check_allow_continue_process()) {
 		do_action('admin_footer-widgets.php');
 	}
 
@@ -84,13 +79,7 @@ function pw_print_script_template() {
 function pw_print_scripts() {
 	global $pagenow, $typenow;
 
-	// currently this plugin just work on edit page screen.
-	if (
-			in_array($pagenow, array('post-new.php', 'post.php', 'edit-tags.php', 'term.php'))
-			||
-			// Page widget config for front page, search page
-			( in_array($pagenow, array('admin.php')) && (($_GET['page'] == 'pw-front-page') || ($_GET['page'] == 'pw-search-page')) )
-	) {
+	if (pw_backend_check_allow_continue_process()) {
 
 		/* Plugin support */
 
@@ -120,11 +109,38 @@ function pw_print_scripts() {
 
 		wp_enqueue_script('pw-widgets', plugin_dir_url(__FILE__) . 'assets/js/page-widgets.js', array('jquery', 'jquery-ui-sortable', 'jquery-ui-draggable', 'jquery-ui-droppable'), rand(), true);
 
-		/* Add some js extend from wp widgets. Fix for wp version 4.8 */
-		do_action( 'admin_print_scripts-widgets.php' );
-		wp_enqueue_script('pw-extend-text-widgets', plugin_dir_url(__FILE__) . 'assets/js/pw-text-widgets-extend-wp-text-widgets.js', array('jquery', 'jquery-ui-sortable', 'jquery-ui-draggable', 'jquery-ui-droppable'), PAGE_WIDGET_VERSION, true);
-		wp_enqueue_script('pw-extend-media-widgets', plugin_dir_url(__FILE__) . 'assets/js/pw-media-widgets-extend-wp-media-widgets.js', array('jquery', 'jquery-ui-sortable', 'jquery-ui-draggable', 'jquery-ui-droppable'), PAGE_WIDGET_VERSION, true);
 
+		/*
+		* Add pwTextWidgets extend from wp.textWidgets
+		* Add pwMediaWidgets extend from wp.mediaWidgets
+		*/
+		if( version_compare( get_bloginfo('version'), '4.7.9', '>' ) ) {
+			do_action( 'admin_print_scripts-widgets.php' );
+			wp_enqueue_script('pw-extend-text-widgets', plugin_dir_url(__FILE__) . 'assets/js/pw-text-widgets-extend-wp-text-widgets.js', array('jquery', 'jquery-ui-sortable', 'jquery-ui-draggable', 'jquery-ui-droppable'), PAGE_WIDGET_VERSION, true);
+			wp_enqueue_script('pw-extend-media-widgets', plugin_dir_url(__FILE__) . 'assets/js/pw-media-widgets-extend-wp-media-widgets.js', array('jquery', 'jquery-ui-sortable', 'jquery-ui-draggable', 'jquery-ui-droppable'), PAGE_WIDGET_VERSION, true);
+		}
+
+		/*
+		* Add pwCustomHTML extend from wp.customHtmlWidgets
+		*/
+		if( version_compare( get_bloginfo('version'), '4.8.5', '>' ) ) {
+			wp_enqueue_script('pw-extend-custom-html', plugin_dir_url(__FILE__) . 'assets/js/pw-custom-html-extend-wp-custom-html.js', array('jquery', 'jquery-ui-sortable', 'jquery-ui-draggable', 'jquery-ui-droppable'), PAGE_WIDGET_VERSION, true);
+
+			$settings = wp_enqueue_code_editor( array(
+				'type' => 'text/html',
+				'codemirror' => array(
+					'indentUnit' => 2,
+					'tabSize' => 2,
+				),
+			));
+
+			if ( empty( $settings ) ) {
+				$settings = array(
+					'disabled' => true,
+				);
+			}
+			wp_add_inline_script( 'pw-extend-custom-html', sprintf( 'pwCustomHTML.init( %s );', wp_json_encode( $settings ) ), 'after' );
+		}
 
 		wp_localize_script( 'pw-widgets', 'wp_page_widgets', array(
 			'remove_inactive_widgets_text'  => __('Press the following button will remove all of these inactive widgets', 'wp-page-widgets'),
@@ -136,13 +152,7 @@ function pw_print_scripts() {
 function pw_print_styles() {
 	global $pagenow, $typenow;
 
-	// currently this plugin just work on edit page, edit tags screen.
-	if (
-			in_array($pagenow, array('post-new.php', 'post.php', 'edit-tags.php', 'term.php'))
-			||
-			// Page widget config for front page, search page
-			( in_array($pagenow, array('admin.php')) && (($_GET['page'] == 'pw-front-page') || ($_GET['page'] == 'pw-search-page')) )
-	) {
+	if (pw_backend_check_allow_continue_process()) {
 		if (is_plugin_active('custom-field-list-widget/widget_custom_field_list.php')) {
 			wp_enqueue_style('pw-widgets3', WP_PLUGIN_URL . '/custom-field-list-widget/widget_custom_field_list_widgetsettings.css', array());
 		}
@@ -167,30 +177,41 @@ function pw_print_styles() {
 
 function pw_admin_menu() {
 	// check user capability (only allow Editor or above to customize Widgets
+	global $typenow, $pagenow;
 
 	$settings = pw_get_settings();
 
 	if (current_user_can('edit_posts')) {
 		// add Page Widgets metabox
-		foreach ($settings['post_types'] as $post_type) {
+		$typesEnabled = pw_get_posts_taxnomies_enabled_from_settings($settings);
+		foreach ($typesEnabled['posts'] as $post_type) {
 			add_meta_box('pw-widgets', __('Page Widgets', 'wp-page-widgets'), 'pw_metabox_content', $post_type, 'advanced', 'high');
+		}
+		foreach ($typesEnabled['taxonomies'] as $taxonomy) {
+			if (!empty($typenow) && !empty($pagenow)) {
+				if ($pagenow == "term.php" && in_array($typenow, $typesEnabled['posts'])) {
+					add_action($taxonomy . '_edit_form', 'pw_showTaxonomyWidget', 99, 2);
+				}
+			}
 		}
 
 		//add Taxonomy Widgets metabox
-		foreach ($settings['taxonomies'] as $taxonomy) {
+		/*foreach ($settings['taxonomies'] as $taxonomy) {
 			add_action($taxonomy . '_edit_form', 'pw_showTaxonomyWidget', 99, 2);
-		}
+		}*/
 	}
 
 	// options page
 	// add_options_page('Page Widgets', 'Page Widgets', 'manage_options', 'pw-settings', 'pw_settings_page');
 	// Menu page
-	add_menu_page('Page Widgets', __('Page Widgets', 'wp-page-widgets'), 'manage_options', 'pw-settings', 'pw_settings_page');
+	//add_menu_page('Page Widgets', __('Page Widgets', 'wp-page-widgets'), 'manage_options', 'pw-settings', 'pw_settings_page');
 
 	// Add a submenu to the custom top-level menu: front page
 	//add_submenu_page('pw-settings', 'Front page', 'Front page', 'manage_options', 'pw-front-page', 'pw_front_page');
 	// Add a submenu to the custom top-level menu: search page
-	add_submenu_page('pw-settings', __('Search page', 'wp-page-widgets'), __('Search page', 'wp-page-widgets'), 'manage_options', 'pw-search-page', 'pw_search_page');
+	//add_submenu_page('pw-settings', __('Search page', 'wp-page-widgets'), __('Search page', 'wp-page-widgets'), 'manage_options', 'pw-search-page', 'pw_search_page');
+	add_submenu_page('options-general.php', __('Page widgets settings', 'wp-page-widgets'), __('Page widgets settings', 'wp-page-widgets'), 'manage_options', 'pw-settings', 'pw_settings_page');
+	add_submenu_page('options-general.php', __('Search page widgets', 'wp-page-widgets'), __('Search page widgets', 'wp-page-widgets'), 'manage_options', 'pw-search-page', 'pw_search_page');
 }
 
 function pw_settings_page() {
@@ -302,6 +323,7 @@ function pw_search_page() {
 
 
 	$customize = get_option('_pw_search_page', 'no') ? get_option('_pw_search_page', 'no') : 'no';
+	$customize = !empty($customize) ? $customize : "no";
 
 	// include widgets function
 	if (!function_exists('wp_list_widgets'))
@@ -315,7 +337,7 @@ function pw_search_page() {
 			<div class="inside">
 				<div style="padding: 5px;">
 					<?php
-					if ($settings['donation'] != 'yes') {
+					if (!empty($settings['donation']) && $settings['donation'] != 'yes') {
 						echo '<div id="donation-message"><p>'.__('Thank you for using this plugin. If you appreciate our works, please consider to', 'wp-page-widgets').' <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=X2CJ88BHMLAT6">'.__('donate us', 'wp-page-widgets').'</a>. '.__('With your help, we can continue supporting and developing this plugin.', 'wp-page-widgets').'<br /><a href="' . admin_url('options-general.php?page=pw-settings') . '"><small>'.__('Hide this donation message', 'wp-page-widgets').'</small></a>.</p></div>';
 					}
 					?>
@@ -382,6 +404,8 @@ function pw_search_page() {
 							foreach ($wp_registered_sidebars as $sidebar => $registered_sidebar) {
 								if ('wp_inactive_widgets' == $sidebar)
 									continue;
+								if(empty($settings['sidebars']))
+									break;
 								if (!in_array($sidebar, $settings['sidebars']))
 									continue;
 								$closed = $i ? ' closed' : '';
@@ -457,16 +481,53 @@ function pw_get_settings() {
 		'sidebars' => array(),
 	);
 	//get list taxonomies registered in system
-	$defaults['taxonomies'] = array();
-	$taxonomies = get_taxonomies(array('show_ui' => true));
+	/*$defaults['taxonomies'] = array();
+	$taxonomies = get_taxonomies(array('show_ui' => true, '_builtin' => true));
 
 	foreach ($taxonomies as $taxonomy) {
 		$defaults['taxonomies'][] = $taxonomy;
-	}
+	}*/
 
 	$settings = get_option('pw_options', array());
-	return wp_parse_args($settings, $defaults);
+	//return wp_parse_args($settings, $defaults);
+	return $settings;
+}
 
+// Parse from settings to get posts and taxonomies enabled
+function pw_get_posts_taxnomies_enabled_from_settings($settings = array())
+{
+	if (empty($settings)) {
+		$settings = pw_get_settings();
+	}
+
+	$return = array(
+		'posts' => array(),
+		'taxonomies' => array()
+	);
+
+	if (empty($settings)) {
+		return $return;
+	}
+
+	if (!is_array($settings)) {
+		$settings = (array) $settings;
+	}
+
+	if (empty($settings["post_types"])) {
+		return $return;
+	}
+
+	foreach ($settings['post_types'] as $post_type) {
+		$return['posts'][$post_type] = $post_type;
+		$listTaxonomies = get_object_taxonomies($post_type);
+		if (!empty($listTaxonomies)) {
+			foreach ($listTaxonomies as $taxonomy) {
+				$return['taxonomies'][$taxonomy] = $taxonomy;
+			}
+		}
+	}
+
+	return $return;
 }
 
 function pw_metabox_content($post) {
@@ -491,7 +552,7 @@ function pw_metabox_content($post) {
 
 
 	$customize = get_post_meta($post->ID, '_customize_sidebars', true);
-	if (!$customize) {
+	if (empty($customize)) {
 		if ($settings['customize_by_default'] == "yes") {
 			$customize = 'yes';
 		} else {
@@ -573,6 +634,8 @@ function pw_metabox_content($post) {
 				foreach ($wp_registered_sidebars as $sidebar => $registered_sidebar) {
 					if ('wp_inactive_widgets' == $sidebar)
 						continue;
+					if(empty($settings['sidebars']))
+									break;
 					if (!in_array($sidebar, $settings['sidebars']))
 						continue;
 					$closed = $i ? ' closed' : '';
@@ -722,6 +785,8 @@ function pw_showTaxonomyWidget($tag, $taxonomy) {
 						foreach ($wp_registered_sidebars as $sidebar => $registered_sidebar) {
 							if ('wp_inactive_widgets' == $sidebar)
 								continue;
+							if(empty($settings['sidebars']))
+									break;
 							if (!in_array($sidebar, $settings['sidebars']))
 								continue;
 							$closed = $i ? ' closed' : '';
@@ -1228,11 +1293,10 @@ function pw_filter_widgets($sidebars_widgets) {
 
 	$objTaxonomy = getTaxonomyAccess();
 
+	$typesEnabled = pw_get_posts_taxnomies_enabled_from_settings();
+
 	if (
-			( is_admin()
-			&& !in_array($pagenow, array('post-new.php', 'post.php', 'edit-tags.php', 'term.php'))
-			&& (!in_array($pagenow, array('admin.php')) && (isset($_GET['page']) && ($_GET['page'] == 'pw-front-page') || isset($_GET['page']) && $_GET['page'] == 'pw-search-page'))
-			)
+			(is_admin() && !pw_backend_check_allow_continue_process())
 			|| (!is_admin() && !is_singular() && !is_search() && empty($objTaxonomy['taxonomy']))
 	) {
 
@@ -1249,6 +1313,9 @@ function pw_filter_widgets($sidebars_widgets) {
 
 	// Post page
 	elseif (empty($objTaxonomy['taxonomy'])) {
+		if (empty($typesEnabled['posts'])) {
+			return $sidebars_widgets;
+		}
 		//if admin alway use query string post = ID
 		//Fix conflic when other plugins use query post after load editing post!
 
@@ -1260,13 +1327,20 @@ function pw_filter_widgets($sidebars_widgets) {
 				$post->ID = $postID;
 		}
 		if (isset($post->ID)) {
-		$enable_customize = get_post_meta($post->ID, '_customize_sidebars', true);
-		$_sidebars_widgets = get_post_meta($post->ID, '_sidebars_widgets', true); }
+			$postGet = get_post($post->ID);
+			if (empty($typesEnabled['posts'][$postGet->post_type])) {
+				return $sidebars_widgets;
+			}
+			$enable_customize = get_post_meta($post->ID, '_customize_sidebars', true);
+			$_sidebars_widgets = get_post_meta($post->ID, '_sidebars_widgets', true);
+		}
 	}
 
 	// Taxonomy page
 	else {
-
+		if (empty($typesEnabled['taxonomies']) || empty($typesEnabled['taxonomies'][$objTaxonomy['taxonomy']])) {
+			return $sidebars_widgets;
+		}
 		$taxonomyMetaData = getTaxonomyMetaData($objTaxonomy['taxonomy'], $objTaxonomy['term_id']);
 		$enable_customize = $taxonomyMetaData['_customize_sidebars'];
 		$_sidebars_widgets = $taxonomyMetaData['_sidebars_widgets'];
@@ -1300,11 +1374,7 @@ function pw_filter_widget_form_instance($instance, $widget) {
 
 	//$enable_customize = get_post_meta($post->ID, '_customize_sidebars', true);
 
-	if (
-			(is_admin() && in_array($pagenow, array('post-new.php', 'post.php', "term.php" )))
-			||
-			( is_admin() && in_array($pagenow, array('admin.php')) && (($_GET['page'] == 'pw-front-page') || ($_GET['page'] == 'pw-search-page')) )
-	) {
+	if (pw_backend_check_allow_continue_process()) {
 
 		// Search page
 		if (in_array($pagenow, array('admin.php')) && (($_GET['page'] == 'pw-front-page') || ($_GET['page'] == 'pw-search-page'))) {
@@ -1434,7 +1504,8 @@ function getWidgetOptionFE($widget_id_base){
 
 function getTaxonomyMetaData($taxonomy, $tag_id) {
 	$taxonomiesMetaData = getTaxonomiesMetaData($taxonomy);
-	$taxonomyData = isset($taxonomiesMetaData[$tag_id]) ? $taxonomiesMetaData[$tag_id] : array('_customize_sidebars' => 0, '_sidebars_widgets' => array());
+	$taxonomyData = isset($taxonomiesMetaData[$tag_id]) ? $taxonomiesMetaData[$tag_id] : array('_customize_sidebars' => "no", '_sidebars_widgets' => array());
+	$taxonomyData['_customize_sidebars'] = !empty($taxonomyData['_customize_sidebars']) ? $taxonomyData['_customize_sidebars'] : "no";
 	return $taxonomyData;
 }
 
@@ -1479,6 +1550,22 @@ function getTaxonomyAccess() {
 	}
 
 	return $return;
+}
+
+function pw_backend_check_allow_continue_process()
+{
+	global $typenow, $pagenow;
+
+	$typesEnabled = pw_get_posts_taxnomies_enabled_from_settings();
+
+	$isSearchConfigPage = !empty($_GET['page']) && $_GET['page'] == 'pw-search-page';
+
+	$isEnableFromSetting = false;
+	if (!empty($typenow) && !empty($typesEnabled['posts'])) {
+		$isEnableFromSetting = in_array($typenow, $typesEnabled['posts']);
+	}
+
+	return $isSearchConfigPage || $isEnableFromSetting;
 }
 
 /*

@@ -3,7 +3,7 @@ Contributors: CodeAndMore
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=X2CJ88BHMLAT6
 Tags: widget, page, post, single, wordpress, custom post type
 Requires at least: 2.5
-Tested up to: 4.8
+Tested up to: 5.1
 Stable tag: trunk
 
 Select widgets for each page / post / custom post type. For every single page / post / custom post type
@@ -56,6 +56,16 @@ The interface is integrated to category/taxonomy editing screen just like you ed
 
 
 == Changelog ==
+= 3.9 (2018-07-09) =
+* Fix compatibility with Intuitive Custom Post Order plugin.
+= 3.8 (2018-06-29) =
+* Fix to work with revolution slider and code mirror.
+= 3.7 (2018-06-22) =
+* Show / hide on taxonomy edit page follow corresponding post type configuration.
+* Fix some php warnings and notices.
+= 3.6 (2018-04-11) =
+* Fix compatibility with WordPress 4.9
+* Show / hide on taxonomy edit page follow corresponding post type configuration.
 = 3.5 (2017-07-10) =
 * Fix compatibility with Simple Social Icons plugin.
 = 3.4 (2017-06-24) =
