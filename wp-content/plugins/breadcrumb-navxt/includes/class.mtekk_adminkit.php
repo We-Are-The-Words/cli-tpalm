@@ -1,6 +1,6 @@
 <?php
 /*
-	Copyright 2015-2018  John Havlik  (email : john.havlik@mtekk.us)
+	Copyright 2015-2020  John Havlik  (email : john.havlik@mtekk.us)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ if(!class_exists('mtekk_adminKit_message'))
 }
 abstract class mtekk_adminKit
 {
-	const version = '2.0.1';
+	const version = '2.1.1';
 	protected $full_name;
 	protected $short_name;
 	protected $plugin_basename;
@@ -63,6 +63,17 @@ abstract class mtekk_adminKit
 	function get_admin_class_version()
 	{
 		return mtekk_adminKit::version;
+	}
+	/**
+	 * Checks if the administrator has the access capability, and adds it if they don't
+	 */
+	function add_cap()
+	{
+		$role = get_role('administrator');
+		if($role instanceof WP_Role && !$role->has_cap($this->access_level))
+		{
+			$role->add_cap($this->access_level);
+		}
 	}
 	/**
 	 * Return the URL of the settings page for the plugin
@@ -123,6 +134,7 @@ abstract class mtekk_adminKit
 	}
 	function init()
 	{
+		$this->add_cap();
 		//Admin Options reset hook
 		if(isset($_POST[$this->unique_prefix . '_admin_reset']))
 		{
@@ -275,7 +287,7 @@ abstract class mtekk_adminKit
 			$this->add_option($this->unique_prefix . '_options', $opts);
 			$this->add_option($this->unique_prefix . '_options_bk', $opts, '', 'no');
 			//Add the version, no need to autoload the db version
-			$this->add_option($this->unique_prefix . '_version', $this::version, '', 'no');
+			$this->update_option($this->unique_prefix . '_version', $this::version, 'no');
 		}
 		else
 		{
@@ -568,7 +580,7 @@ abstract class mtekk_adminKit
 			{
 				$temp .= '<br />' . $setting;
 			}
-			$this->messages[] = new mtekk_adminKit_message($temp . '<br />' . sprintf(esc_html__('Please include this message in your %sbug report%s.', $this->identifier), '<a title="' . sprintf(esc_attr__('Go to the %s support post for your version.', $this->identifier), $this->short_name) . '" href="' . $this->support_url . $this::version . '/#respond">', '</a>'), 'info');
+			$this->messages[] = new mtekk_adminKit_message($temp . '<br />' . sprintf(esc_html__('Please include this message in your %sbug report%s.', $this->identifier), '<a title="' . sprintf(esc_attr__('Go to the %s support forum.', $this->identifier), $this->short_name) . '" href="' . $this->support_url . '">', '</a>'), 'info');
 		}
 		add_action('admin_notices', array($this, 'messages'));
 	}
@@ -605,8 +617,12 @@ abstract class mtekk_adminKit
 		//Loop through the options array
 		foreach($this->opt as $key=>$option)
 		{
+			if(is_array($option))
+			{
+				continue;
+			}
 			//Add a option tag under the options tag, store the option value
-			$node = $dom->createElement('option', htmlentities($option, ENT_COMPAT, 'UTF-8'));
+			$node = $dom->createElement('option', htmlentities($option, ENT_COMPAT | ENT_XML1, 'UTF-8'));
 			$newnode = $plugnode->appendChild($node);
 			//Change the tag's name to that of the stored option
 			$newnode->setAttribute('name', $key);
@@ -639,7 +655,7 @@ abstract class mtekk_adminKit
 		//We want to catch errors ourselves
 		set_error_handler('error');
 		//Load the user uploaded file, handle failure gracefully
-		if($dom->load($_FILES[$this->unique_prefix . '_admin_import_file']['tmp_name']))
+		if(is_uploaded_file($_FILES[$this->unique_prefix . '_admin_import_file']['tmp_name']) && $dom->load($_FILES[$this->unique_prefix . '_admin_import_file']['tmp_name']))
 		{
 			$opts_temp = array();
 			$version = '';
@@ -792,7 +808,7 @@ abstract class mtekk_adminKit
 			$message->render();
 		}
 		//Old deprecated messages
-		if(count($this->message))
+		if(is_array($this->message) && count($this->message))
 		{
 			_deprecated_function( __FUNCTION__, '2.0.0', __('adminKit::message is deprecated, use new adminkit_messages instead.', $this->identifier) );
 			//Loop through our message classes
@@ -865,6 +881,7 @@ abstract class mtekk_adminKit
 		$form .= sprintf('<form action="options-general.php?page=%s" method="post" enctype="multipart/form-data" id="%s_admin_upload">', esc_attr($this->identifier), esc_attr($this->unique_prefix));
 		$form .= wp_nonce_field($this->unique_prefix . '_admin_import_export', '_wpnonce', true, false);
 		$form .= sprintf('<fieldset id="import_export" class="%s_options">', esc_attr($this->unique_prefix));
+		$form .= '<legend class="screen-reader-text">' . esc_html__( 'Import settings', $this->identifier ) . '</legend>';
 		$form .= '<p>' . esc_html__('Import settings from a XML file, export the current settings to a XML file, or reset to the default settings.', $this->identifier) . '</p>';
 		$form .= '<table class="form-table"><tr valign="top"><th scope="row">';
 		$form .= sprintf('<label for="%s_admin_import_file">', esc_attr($this->unique_prefix));
@@ -1054,10 +1071,10 @@ abstract class mtekk_adminKit
 		}?>
 		<tr valign="top">
 			<th scope="row">
-				<?php $this->label($opt_id, $label);?>
+				<?php echo esc_html( $label ); ?>
 			</th>
-			<td>	
-				<label>
+			<td>
+				<label for="<?php echo esc_attr( $opt_id ); ?>">
 					<?php printf('<input type="checkbox" name="%1$s" id="%2$s" value="%3$s" class="%4$s" %5$s %6$s/>', esc_attr($opt_name), esc_attr($opt_id), esc_attr($this->opt[$option]), esc_attr($class), disabled($disable, true, false), checked($this->opt[$option], true, false));?>
 					<?php echo $instruction; ?>
 				</label><br />
