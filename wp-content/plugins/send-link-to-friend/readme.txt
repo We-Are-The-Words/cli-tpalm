@@ -5,8 +5,8 @@ Donate link: http://www.gopiplus.com/work/2010/07/18/send-link-to-friend/
 Author URI: http://www.gopiplus.com/work/2010/07/18/send-link-to-friend/
 Plugin URI: http://www.gopiplus.com/work/2010/07/18/send-link-to-friend/
 Requires at least: 3.4
-Tested up to: 5.7
-Stable tag: 12.2
+Tested up to: 5.8
+Stable tag: 12.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -56,6 +56,11 @@ Q1. What is reCaptcha and how to generate the Site Key and Secret Key?
 [Answer](http://www.gopiplus.com/work/2010/07/18/send-link-to-friend/) 
   
 == Upgrade Notice ==
+
+= 12.3 =
+
+1. Tested up to 5.8
+2. Use plugin short code in the widget.
 
 = 12.2 =
 
@@ -211,6 +216,11 @@ This is the first version.
 2. Admin page screen. http://www.gopiplus.com/work/2010/07/18/send-link-to-friend/
 
 == Changelog ==
+
+= 12.3 =
+
+1. Tested up to 5.8
+2. Use plugin short code in the widget.
 
 = 12.2 =
 
