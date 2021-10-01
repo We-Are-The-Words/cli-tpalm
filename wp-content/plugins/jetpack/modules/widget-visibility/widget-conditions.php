@@ -1,36 +1,125 @@
 <?php
 
+use Automattic\Jetpack\Assets;
 
 /**
- * Hide or show widgets conditionally.
+ * Hide or show legacy widgets conditionally.
+ *
+ * This class has two responsiblities - administrating the conditions in which legacy widgets may be hidden or shown
+ * and hiding/showing the legacy widgets on the front-end of the site, depending upon the evaluation of those conditions.
+ *
+ * Administrating the conditions can be done in one of four different WordPress screens, plus direct use of the API and
+ * is supplemented with a legacy widget preview screen. The four different admin screens are
+ *
+ * Gutenberg widget experience - widget admin (widgets.php + API + legacy widget preview)
+ * Gutenberg widget experience - Customizer (customizer screen/API + API + legacy widget preview)
+ * Classic widget experience - widget admin (widgets.php + admin-ajax XHR requests)
+ * Classic widget experience - Customizer (customizer screen/API)
+ *
+ * An introduction to the API endpoints can be found here: https://make.wordpress.org/core/2021/06/29/rest-api-changes-in-wordpress-5-8/
  */
-
 class Jetpack_Widget_Conditions {
 	static $passed_template_redirect = false;
 
 	public static function init() {
-		if ( is_admin() ) {
-			add_action( 'sidebar_admin_setup', array( __CLASS__, 'widget_admin_setup' ) );
-			add_filter( 'widget_update_callback', array( __CLASS__, 'widget_update' ), 10, 3 );
+		global $pagenow;
+
+		// The Gutenberg based widget experience will show a preview of legacy widgets by including a URL beginning
+		// widgets.php?legacy-widget-preview inside an iframe. Previews don't need widget editing loaded and also don't
+		// want to run the filter - if the widget is filtered out it'll be empty, which would be confusing.
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( isset( $_GET['legacy-widget-preview'] ) ) {
+			return;
+		}
+
+		// If action is posted and it's save-widget then it's relevant to widget conditions, otherwise it's something
+		// else and it's not worth registering hooks.
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
+		if ( isset( $_POST['action'] ) && ! in_array( $_POST['action'], array( 'save-widget', 'update-widget' ), true ) ) {
+			return;
+		}
+
+		// API call to *list* the widget types doesn't use editing visibility or display widgets.
+		if ( false !== strpos( $_SERVER['REQUEST_URI'], '/widget-types?' ) ) {
+			return;
+		}
+
+		$add_data_assets_to_page = false;
+		$add_html_to_form        = false;
+		$handle_widget_updates   = false;
+
+		$using_classic_experience = ( ! function_exists( 'wp_use_widgets_block_editor' ) || ! wp_use_widgets_block_editor() );
+		if ( $using_classic_experience &&
+			(
+				is_customize_preview() || 'widgets.php' === $pagenow ||
+				// phpcs:ignore WordPress.Security.NonceVerification.Missing
+				( 'admin-ajax.php' === $pagenow && array_key_exists( 'action', $_POST ) && 'save-widget' === $_POST['action'] )
+			)
+		) {
+			$add_data_assets_to_page = true;
+			$add_html_to_form        = true;
+			$handle_widget_updates   = true;
+		} else {
+			// On a screen that is hosting the API in the gutenberg editing experience.
+			if ( is_customize_preview() || 'widgets.php' === $pagenow ) {
+				$add_data_assets_to_page = true;
+			}
+
+			// Encoding for a particular widget end point.
+			if ( 1 === preg_match( '|/widget-types/.*/encode|', $_SERVER['REQUEST_URI'] ) ) {
+				$add_html_to_form      = true;
+				$handle_widget_updates = true;
+			}
+
+			// Batch API is usually saving but could be anything.
+			if ( false !== strpos( $_SERVER['REQUEST_URI'], '/wp-json/batch/v1' ) ) {
+				$handle_widget_updates = true;
+				$add_html_to_form      = true;
+			}
+
+			// Saving widgets via non-batch API. This isn't used within WordPress but could be used by third parties in theory.
+			if ( 'GET' !== $_SERVER['REQUEST_METHOD'] && false !== strpos( $_SERVER['REQUEST_URI'], '/wp/v2/widgets' ) ) {
+				$handle_widget_updates = true;
+				$add_html_to_form      = true;
+			}
+		}
+
+		if ( $add_html_to_form ) {
 			add_action( 'in_widget_form', array( __CLASS__, 'widget_conditions_admin' ), 10, 3 );
-		} elseif ( ! in_array( $GLOBALS['pagenow'], array( 'wp-login.php', 'wp-register.php' ) ) ) {
+		}
+
+		if ( $handle_widget_updates ) {
+			add_filter( 'widget_update_callback', array( __CLASS__, 'widget_update' ), 10, 3 );
+		}
+
+		if ( $add_data_assets_to_page ) {
+			add_action( 'sidebar_admin_setup', array( __CLASS__, 'widget_admin_setup' ) );
+		}
+
+		if ( ! $add_html_to_form && ! $handle_widget_updates && ! $add_data_assets_to_page &&
+			! in_array( $pagenow, array( 'wp-login.php', 'wp-register.php' ), true )
+		) {
+			// Not hit any known widget admin endpoint, register widget display hooks instead.
 			add_filter( 'widget_display_callback', array( __CLASS__, 'filter_widget' ) );
 			add_filter( 'sidebars_widgets', array( __CLASS__, 'sidebars_widgets' ) );
 			add_action( 'template_redirect', array( __CLASS__, 'template_redirect' ) );
 		}
 	}
 
+	/**
+	 * Prepare the interface for editing widgets - loading css, javascript & data
+	 */
 	public static function widget_admin_setup() {
-		wp_enqueue_style( 'widget-conditions', plugins_url( 'widget-conditions/widget-conditions.css', __FILE__ ) );
+		wp_enqueue_style( 'widget-conditions', plugins_url( 'widget-conditions/widget-conditions.css', __FILE__ ), array( 'widgets' ), JETPACK__VERSION );
 		wp_style_add_data( 'widget-conditions', 'rtl', 'replace' );
 		wp_enqueue_script(
 			'widget-conditions',
-			Jetpack::get_file_url_for_environment(
+			Assets::get_file_url_for_environment(
 				'_inc/build/widget-visibility/widget-conditions/widget-conditions.min.js',
 				'modules/widget-visibility/widget-conditions/widget-conditions.js'
 			),
 			array( 'jquery', 'jquery-ui-core' ),
-			20171227,
+			JETPACK__VERSION,
 			true
 		);
 
@@ -44,7 +133,16 @@ class Jetpack_Widget_Conditions {
 
 		$categories = get_categories(
 			array(
-				'number'  => 1000,
+				/**
+				 * Specific a maximum number of categories to query for the Widget visibility UI.
+				 *
+				 * @module widget-visibility
+				 *
+				 * @since 9.1.0
+				 *
+				 * @param int $number Maximum number of categories displayed in the Widget visibility UI.
+				 */
+				'number'  => (int) apply_filters( 'jetpack_widget_visibility_max_number_categories', 1000 ),
 				'orderby' => 'count',
 				'order'   => 'DESC',
 			)
@@ -67,6 +165,7 @@ class Jetpack_Widget_Conditions {
 			array(
 				'orderby' => 'name',
 				'who'     => 'authors',
+				'fields'  => array( 'ID', 'display_name' ),
 			)
 		);
 
@@ -87,7 +186,16 @@ class Jetpack_Widget_Conditions {
 
 		$tags = get_tags(
 			array(
-				'number'  => 1000,
+				/**
+				 * Specific a maximum number of tags to query for the Widget visibility UI.
+				 *
+				 * @module widget-visibility
+				 *
+				 * @since 9.1.0
+				 *
+				 * @param int $number Maximum number of tags displayed in the Widget visibility UI.
+				 */
+				'number'  => (int) apply_filters( 'jetpack_widget_visibility_max_number_tags', 1000 ),
 				'orderby' => 'count',
 				'order'   => 'DESC',
 			)
@@ -125,10 +233,23 @@ class Jetpack_Widget_Conditions {
 
 		$widget_conditions_data['page'][] = array( __( 'Post type Archives:', 'jetpack' ), $widget_conditions_post_type_archives );
 
-		$pages_dropdown = preg_replace( '/<\/?select[^>]*?>/i', '', wp_dropdown_pages( array( 'echo' => false ) ) );
+		$pages = self::get_pages();
 
+		$dropdown_tree_args = array(
+			'depth'                 => 0,
+			'child_of'              => 0,
+			'selected'              => 0,
+			'echo'                  => false,
+			'name'                  => 'page_id',
+			'id'                    => '',
+			'class'                 => '',
+			'show_option_none'      => '',
+			'show_option_no_change' => '',
+			'option_none_value'     => '',
+			'value_field'           => 'ID',
+		);
+		$pages_dropdown = walk_page_dropdown_tree( $pages, 0, $dropdown_tree_args );
 		preg_match_all( '/value=.([0-9]+).[^>]*>([^<]+)</', $pages_dropdown, $page_ids_and_titles, PREG_SET_ORDER );
-
 		$static_pages = array();
 
 		foreach ( $page_ids_and_titles as $page_id_and_title ) {
@@ -168,7 +289,7 @@ class Jetpack_Widget_Conditions {
 			);
 
 			$widget_conditions_terms   = array();
-			$widget_conditions_terms[] = array( $taxonomy->name, __( 'All pages', 'jetpack' ) );
+			$widget_conditions_terms[] = array( $taxonomy->name, $taxonomy->labels->all_items );
 
 			foreach ( $taxonomy_terms as $term ) {
 				$widget_conditions_terms[] = array( $taxonomy->name . '_tax_' . $term->term_id, $term->name );
@@ -180,7 +301,7 @@ class Jetpack_Widget_Conditions {
 		wp_localize_script( 'widget-conditions', 'widget_conditions_data', $widget_conditions_data );
 
 		// Save a list of the IDs of all pages that have children for dynamically showing the "Include children" checkbox.
-		$all_pages   = get_pages();
+		$all_pages   = self::get_pages();
 		$all_parents = array();
 
 		foreach ( $all_pages as $page ) {
@@ -199,11 +320,67 @@ class Jetpack_Widget_Conditions {
 	}
 
 	/**
+	 * Retrieves a full list of all pages, containing just the IDs, post_parent, post_title, and post_status fields.
+	 *
+	 * Since the WordPress' `get_pages` function does not allow us to fetch only the fields mentioned
+	 * above, we need to introduce a custom method using a direct SQL query fetching those.
+	 *
+	 * By fetching only those four fields and not populating the object cache for all the pages, we can
+	 * improve the performance of the query on sites having a lot of pages.
+	 *
+	 * @see https://core.trac.wordpress.org/ticket/51469
+	 *
+	 * @return array List of all pages on the site (stdClass objects containing ID, post_title, post_parent, and post_status only).
+	 */
+	public static function get_pages() {
+		global $wpdb;
+
+		$last_changed = wp_cache_get_last_changed( 'posts' );
+		$cache_key    = "get_pages:$last_changed";
+		$pages        = wp_cache_get( $cache_key, 'widget_conditions' );
+		if ( false === $pages ) {
+			$pages = $wpdb->get_results( "SELECT {$wpdb->posts}.ID, {$wpdb->posts}.post_parent, {$wpdb->posts}.post_title, {$wpdb->posts}.post_status FROM {$wpdb->posts} WHERE {$wpdb->posts}.post_type = 'page' AND {$wpdb->posts}.post_status = 'publish' ORDER BY {$wpdb->posts}.post_title ASC" );
+			wp_cache_set( $cache_key, $pages, 'widget_conditions' );
+		}
+
+		// Copy-pasted from the get_pages function. For usage in the `widget_conditions_get_pages` filter.
+		$parsed_args = array(
+			'child_of'     => 0,
+			'sort_order'   => 'ASC',
+			'sort_column'  => 'post_title',
+			'hierarchical' => 1,
+			'exclude'      => array(),
+			'include'      => array(),
+			'meta_key'     => '',
+			'meta_value'   => '',
+			'authors'      => '',
+			'parent'       => -1,
+			'exclude_tree' => array(),
+			'number'       => '',
+			'offset'       => 0,
+			'post_type'    => 'page',
+			'post_status'  => 'publish',
+		);
+
+		/**
+		 * Filters the retrieved list of pages.
+		 *
+		 * @since 9.1.0
+		 *
+		 * @module widget-visibility
+		 *
+		 * @param stdClass[] $pages       Array of objects containing only the ID, post_parent, post_title, and post_status fields.
+		 * @param array      $parsed_args Array of get_pages() arguments.
+		 */
+		return apply_filters( 'jetpack_widget_visibility_get_pages', $pages, $parsed_args );
+	}
+
+	/**
 	 * Add the widget conditions to each widget in the admin.
 	 *
-	 * @param $widget unused.
-	 * @param $return unused.
-	 * @param array         $instance The widget settings.
+	 * @param WP_Widget $widget Widget to add conditions settings to.
+	 * @param null      $return unused.
+	 * @param array     $instance The widget settings.
 	 */
 	public static function widget_conditions_admin( $widget, $return, $instance ) {
 		$conditions = array();
@@ -233,6 +410,9 @@ class Jetpack_Widget_Conditions {
 			class="
 				widget-conditional
 				<?php
+				// $_POST['widget-conditions-visible'] is used in the classic widget experience to decide whether to
+				// display the visibility panel open, e.g. when saving. In the gutenberg widget experience the POST
+				// value will always be empty, but this is fine - it doesn't rerender the HTML when saving anyway.
 				if (
 						empty( $_POST['widget-conditions-visible'] )
 						|| $_POST['widget-conditions-visible'] == '0'
@@ -263,10 +443,19 @@ class Jetpack_Widget_Conditions {
 			<?php
 			if ( ! isset( $_POST['widget-conditions-visible'] ) ) {
 				?>
-				<a href="#" class="button display-options"><?php _e( 'Visibility', 'jetpack' ); ?></a><?php } ?>
+				<a href="#" class="button display-options"><?php esc_html_e( 'Visibility', 'jetpack' ); ?></a><?php } ?>
 			<div class="widget-conditional-inner">
 				<div class="condition-top">
-					<?php printf( _x( '%s if:', 'placeholder: dropdown menu to select widget visibility; hide if or show if', 'jetpack' ), '<select name="conditions[action]"><option value="show" ' . selected( $conditions['action'], 'show', false ) . '>' . esc_html_x( 'Show', 'Used in the "%s if:" translation for the widget visibility dropdown', 'jetpack' ) . '</option><option value="hide" ' . selected( $conditions['action'], 'hide', false ) . '>' . esc_html_x( 'Hide', 'Used in the "%s if:" translation for the widget visibility dropdown', 'jetpack' ) . '</option></select>' ); ?>
+					<?php
+						printf(
+							// translators: %s is a HTML select widget for widget visibility, 'show' and 'hide' are it's options. It will read like 'show if' or 'hide if'.
+							esc_html_x( '%s if:', 'placeholder: dropdown menu to select widget visibility; hide if or show if', 'jetpack' ),
+							'<select name="' . esc_attr( $widget->get_field_name( 'conditions[action]' ) ) . '">
+											<option value="show" ' . selected( $conditions['action'], 'show', false ) . '>' . esc_html_x( 'Show', 'Used in the "%s if:" translation for the widget visibility dropdown', 'jetpack' ) . '</option>
+											<option value="hide" ' . selected( $conditions['action'], 'hide', false ) . '>' . esc_html_x( 'Hide', 'Used in the "%s if:" translation for the widget visibility dropdown', 'jetpack' ) . '</option>
+										</select>'
+						);
+					?>
 				</div><!-- .condition-top -->
 
 				<div class="conditions">
@@ -284,7 +473,7 @@ class Jetpack_Widget_Conditions {
 						?>
 						<div class="condition" data-rule-major="<?php echo esc_attr( $rule['major'] ); ?>" data-rule-minor="<?php echo esc_attr( $rule['minor'] ); ?>" data-rule-has-children="<?php echo esc_attr( $rule['has_children'] ); ?>">
 							<div class="selection alignleft">
-								<select class="conditions-rule-major" name="conditions[rules_major][]">
+								<select class="conditions-rule-major" name="<?php echo esc_attr( $widget->get_field_name( 'conditions[rules_major][]' ) ); ?>">
 									<option value="" <?php selected( '', $rule['major'] ); ?>><?php echo esc_html_x( '-- Select --', 'Used as the default option in a dropdown list', 'jetpack' ); ?></option>
 									<option value="category" <?php selected( 'category', $rule['major'] ); ?>><?php esc_html_e( 'Category', 'jetpack' ); ?></option>
 									<option value="author" <?php selected( 'author', $rule['major'] ); ?>><?php echo esc_html_x( 'Author', 'Noun, as in: "The author of this post is..."', 'jetpack' ); ?></option>
@@ -304,7 +493,7 @@ class Jetpack_Widget_Conditions {
 
 								<?php _ex( 'is', 'Widget Visibility: {Rule Major [Page]} is {Rule Minor [Search results]}', 'jetpack' ); ?>
 
-								<select class="conditions-rule-minor" name="conditions[rules_minor][]" 
+								<select class="conditions-rule-minor" name="<?php echo esc_attr( $widget->get_field_name( 'conditions[rules_minor][]' ) ); ?>"
 								<?php
 								if ( ! $rule['major'] ) {
 									?>
@@ -318,13 +507,13 @@ class Jetpack_Widget_Conditions {
 									<option value="<?php echo esc_attr( $rule['minor'] ); ?>" selected="selected"></option>
 								</select>
 
-								<span class="conditions-rule-has-children" 
+								<span class="conditions-rule-has-children"
 								<?php
 								if ( ! $rule['has_children'] ) {
 									?>
 									 style="display: none;"<?php } ?>>
 									<label>
-										<input type="checkbox" name="conditions[page_children][<?php echo $rule_index; ?>]" value="has" <?php checked( $rule['has_children'], true ); ?> />
+										<input type="checkbox" name="<?php echo esc_attr( $widget->get_field_name( "conditions[page_children][$rule_index]" ) ); ?>" value="has" <?php checked( $rule['has_children'], true ); ?> />
 										<?php echo esc_html_x( 'Include children', 'Checkbox on Widget Visibility if children of the selected page should be included in the visibility rule.', 'jetpack' ); ?>
 									</label>
 								</span>
@@ -353,7 +542,7 @@ class Jetpack_Widget_Conditions {
 						<label>
 							<input
 								type="checkbox"
-								name="conditions[match_all]"
+								name="<?php echo esc_attr( $widget->get_field_name( 'conditions[match_all]' ) ); ?>"
 								value="1"
 								class="conditions-match-all"
 								<?php checked( $conditions['match_all'], '1' ); ?> />
@@ -369,35 +558,34 @@ class Jetpack_Widget_Conditions {
 	/**
 	 * On an AJAX update of the widget settings, process the display conditions.
 	 *
+	 * @param array $instance The current instance's settings.
 	 * @param array $new_instance New settings for this instance as input by the user.
 	 * @param array $old_instance Old settings for this instance.
 	 * @return array Modified settings.
 	 */
 	public static function widget_update( $instance, $new_instance, $old_instance ) {
-		if ( empty( $_POST['conditions'] ) ) {
-			return $instance;
-		}
-
 		$conditions              = array();
-		$conditions['action']    = $_POST['conditions']['action'];
-		$conditions['match_all'] = ( isset( $_POST['conditions']['match_all'] ) ? '1' : '0' );
-		$conditions['rules']     = array();
+		$conditions['action']    = isset( $new_instance['conditions']['action'] ) ? $new_instance['conditions']['action'] : null;
+		$conditions['match_all'] = isset( $new_instance['conditions']['match_all'] ) ? '1' : '0';
+		$conditions['rules']     = isset( $new_instance['conditions']['rules'] ) ? $new_instance['conditions']['rules'] : array();
 
-		foreach ( $_POST['conditions']['rules_major'] as $index => $major_rule ) {
-			if ( ! $major_rule ) {
-				continue;
+		if ( isset( $new_instance['conditions']['rules_major'] ) ) {
+			foreach ( $new_instance['conditions']['rules_major'] as $index => $major_rule ) {
+				if ( ! $major_rule ) {
+					continue;
+				}
+
+				$conditions['rules'][] = array(
+					'major'        => $major_rule,
+					'minor'        => isset( $new_instance['conditions']['rules_minor'][ $index ] ) ? $new_instance['conditions']['rules_minor'][ $index ] : '',
+					'has_children' => isset( $new_instance['conditions']['page_children'][ $index ] ) ? true : false,
+				);
 			}
-
-			$conditions['rules'][] = array(
-				'major'        => $major_rule,
-				'minor'        => isset( $_POST['conditions']['rules_minor'][ $index ] ) ? $_POST['conditions']['rules_minor'][ $index ] : '',
-				'has_children' => isset( $_POST['conditions']['page_children'][ $index ] ) ? true : false,
-			);
 		}
 
 		if ( ! empty( $conditions['rules'] ) ) {
 			$instance['conditions'] = $conditions;
-		} else {
+		} elseif ( empty( $new_instance['conditions']['rules'] ) ) {
 			unset( $instance['conditions'] );
 		}
 
@@ -460,7 +648,7 @@ class Jetpack_Widget_Conditions {
 				// Find the conditions for this widget.
 				if ( preg_match( '/^(.+?)-(\d+)$/', $widget_id, $matches ) ) {
 					$id_base       = $matches[1];
-					$widget_number = intval( $matches[2] );
+					$widget_number = (int) $matches[2];
 				} else {
 					$id_base       = $widget_id;
 					$widget_number = null;
@@ -514,6 +702,12 @@ class Jetpack_Widget_Conditions {
 		global $wp_query;
 
 		if ( empty( $instance['conditions'] ) || empty( $instance['conditions']['rules'] ) ) {
+			return $instance;
+		}
+
+		// Don't filter widgets from the REST API when it's called via the widgets admin page - otherwise they could get
+		// filtered out and become impossible to edit.
+		if ( strpos( wp_get_raw_referer(), '/wp-admin/widgets.php' ) && false !== strpos( $_SERVER['REQUEST_URI'], '/wp-json/' ) ) {
 			return $instance;
 		}
 
@@ -772,7 +966,7 @@ class Jetpack_Widget_Conditions {
 			$taxonomy = 'post_tag';
 		}
 
-		if ( function_exists( 'wp_get_split_term' ) && $new_term_id = wp_get_split_term( $old_term_id, $taxonomy ) ) {
+		if ( $new_term_id = wp_get_split_term( $old_term_id, $taxonomy ) ) {
 			$term_id = $new_term_id;
 		}
 
