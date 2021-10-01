@@ -52,18 +52,33 @@ if ( ! class_exists( 'Shortcode_Widget' ) ) {
 		 * @return void
 		 */
 		public function widget( $args, $instance ) {
+			$title = ! empty( $instance['title'] ) ? $instance['title'] : '';
+
+			$instance['filter'] = ! empty( $instance['filter'] );
+
 			/** This filter is documented in wp-includes/default-widgets.php */
-			$title = apply_filters( 'widget_title', empty( $instance['title'] ) ? '' : $instance['title'], $instance, $this->id_base );
+			$title = apply_filters( 'widget_title', $title, $instance, $this->id_base );
 
 			/** This filter is documented in wp-includes/widgets/class-wp-widget-text.php */
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 			$text = do_shortcode( apply_filters( 'widget_text', empty( $instance['text'] ) ? '' : $instance['text'], $instance, $this ) );
+
+			// We need $args['before_widget'] value as it is, so no escaping it.
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			echo $args['before_widget'];
 			if ( ! empty( $title ) ) {
+				// We need $args['before_title'] and $args['after_title'] values as they are, so no escaping it.
+				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				echo $args['before_title'] . $title . $args['after_title'];
 			}
 			?>
+			<?php
+			// We need $instance['filter'] value as it is, so no escaping it.
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 			<div class="textwidget"><?php echo ! empty( $instance['filter'] ) ? wpautop( $text ) : $text; ?></div>
 			<?php
+			// We need $args['after_widget'] value as it is, so no escaping it.
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			echo $args['after_widget'];
 		}
 
@@ -81,14 +96,24 @@ if ( ! class_exists( 'Shortcode_Widget' ) ) {
 		 * @return array|false        Settings to save or bool false to cancel saving.
 		 */
 		public function update( $new_instance, $old_instance ) {
-			$instance          = $old_instance;
-			$instance['title'] = wp_strip_all_tags( $new_instance['title'] );
+			$new_instance = wp_parse_args(
+				$new_instance,
+				array(
+					'title'  => '',
+					'text'   => '',
+					'filter' => false,
+				)
+			);
+			$instance     = $old_instance;
+
+			$instance['title'] = sanitize_text_field( $new_instance['title'] );
 			if ( current_user_can( 'unfiltered_html' ) ) {
 				$instance['text'] = $new_instance['text'];
 			} else {
-				$instance['text'] = stripslashes( wp_filter_post_kses( addslashes( $new_instance['text'] ) ) ); // wp_filter_post_kses() expects slashed.
+				$instance['text'] = wp_kses_post( $new_instance['text'] );
 			}
 			$instance['filter'] = ! empty( $new_instance['filter'] );
+
 			return $instance;
 		}
 

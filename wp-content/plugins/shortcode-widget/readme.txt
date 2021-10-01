@@ -4,8 +4,8 @@ Donate Link: https://PayPal.me/gagan0123
 Tags: Shortcode, Widget
 Requires at least: 3.3
 Requires PHP: 5.6
-Tested up to: 5.2
-Stable tag: 1.5.2
+Tested up to: 5.6
+Stable tag: 1.5.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -29,6 +29,11 @@ To test the widget you can add the widget and use the shortcode "[shortcode_widg
 3. Widget with the output of the shortcode
 
 == Changelog ==
+
+= 1.5.3 =
+* Strict PHPCS ruleset adherence.
+* More documentation in widget class.
+* Testing with WordPress 5.6
 
 = 1.5.2 =
 * Some PHPCS corrections, making code adhering to WordPress coding standards.
