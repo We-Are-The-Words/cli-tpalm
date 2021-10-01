@@ -2,7 +2,7 @@
 /**
  * Class: WPGMP_Model_Overview
  * @author Flipper Code <hello@flippercode.com>
- * @version 3.0.0
+ * @version 4.1.6
  * @package Maps
  */
 
@@ -24,7 +24,7 @@ if ( ! class_exists( 'WPGMP_Model_Overview' ) ) {
 		 */
 		function navigation() {
 			return array(
-			'wpgmp_how_overview' => esc_html__( 'How to Use', 'wpgmp_google_map' ),
+			'wpgmp_how_overview' => esc_html__( 'How to Use', 'wp-google-map-plugin' ),
 			);
 		}
 	}

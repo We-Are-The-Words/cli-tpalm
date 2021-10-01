@@ -2,8 +2,8 @@
 /**
  * Controller class
  * @author Flipper Code<hello@flippercode.com>
- * @version 3.0.0
- * @package Posts
+ * @version 4.1.6
+ * @package Maps
  */
 
 if ( ! class_exists( 'WPGMP_Controller' ) ) {
@@ -11,7 +11,7 @@ if ( ! class_exists( 'WPGMP_Controller' ) ) {
 	/**
 	 * Controller class to display views.
 	 * @author: Flipper Code<hello@flippercode.com>
-	 * @version: 3.0.0
+	 * @version: 4.1.6
 	 * @package: Maps
 	 */
 

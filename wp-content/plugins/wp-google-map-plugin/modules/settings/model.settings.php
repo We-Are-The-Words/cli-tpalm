@@ -2,7 +2,7 @@
 /**
  * Class: WPGMP_Model_Settings
  * @author Flipper Code <hello@flippercode.com>
- * @version 3.0.0
+ * @version 4.1.6
  * @package Maps
  */
 
@@ -25,7 +25,7 @@ if ( ! class_exists( 'WPGMP_Model_Settings' ) ) {
 		 */
 		function navigation() {
 			return array(
-				'wpgmp_manage_settings' => esc_html__( 'Settings', 'wpgmp_google_map' ),
+				'wpgmp_manage_settings' => esc_html__( 'Plugin Settings', 'wp-google-map-plugin' ),
 			);
 		}
 		/**
@@ -73,7 +73,7 @@ if ( ! class_exists( 'WPGMP_Model_Settings' ) ) {
 			update_option( 'wpgmp_scripts_place',sanitize_text_field( wp_unslash( $_POST['wpgmp_scripts_place'] ) ) );
 			update_option( 'wpgmp_location_extrafields', serialize(  $extra_fields  ) );
 			update_option( 'wpgmp_allow_meta', serialize(  $meta_hide  ));
-			$response['success'] = esc_html__( 'Setting(s) saved successfully.','wpgmp_google_map' );
+			$response['success'] = esc_html__( 'Setting(s) saved successfully.','wp-google-map-plugin' );
 			return $response;
 
 		}

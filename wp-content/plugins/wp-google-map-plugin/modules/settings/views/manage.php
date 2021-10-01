@@ -2,97 +2,139 @@
 /**
  * This class used to manage settings page in backend.
  * @author Flipper Code <hello@flippercode.com>
- * @version 1.0.0
+ * @version 4.1.6
  * @package Maps
  */
 
 $form  = new WPGMP_Template();
 $form->form_action = esc_url ( add_query_arg( 'page', 'wpgmp_manage_settings', admin_url ('admin.php') )  );
-$form->set_header( esc_html__( 'General Setting(s)', 'wpgmp_google_map' ), $response );
-$link = '<a target="_blank" href="https://developers.google.com/maps/documentation/javascript/get-api-key">'.esc_html__("create google maps api key","wpgmp_google_map").'</a>';
+$form->set_header( esc_html__( 'General Setting(s)', 'wp-google-map-plugin' ), $response, $enable_accordion = false );
+
+$form->add_element( 'group', 'wpgmp_general_settings', array(
+	'value' => esc_html__( 'General Setting(s)', 'wp-google-map-plugin' ),
+	'before' => '<div class="fc-12">',
+	'after' => '</div>',
+));
+
+$link = '<a target="_blank" href="https://developers.google.com/maps/documentation/javascript/get-api-key">'.esc_html__("create google maps api key","wp-google-map-plugin").'</a>';
+
+
+$form->set_col( 2 );
 
 $form->add_element('text','wpgmp_api_key',array(
-	'lable' => esc_html__( 'Google Maps API Key','wpgmp_google_map' ),
+	'lable' => esc_html__( 'Google Maps API Key','wp-google-map-plugin' ),
 	'value' => get_option( 'wpgmp_api_key' ),
-	'desc'  => sprintf( esc_html__( 'Get here %1$s and insert here.', 'wpgmp_google_map' ), $link ),
-	));
+	'before' => '<div class="fc-4">',
+	'after'  => '</div>',
+	'desc'  => sprintf( esc_html__( 'Get here %1$s and insert here.', 'wp-google-map-plugin' ), $link ),
+));
+
+$key_url = 'http://bit.ly/29Rlmfc';
+
+if ( get_option( 'wpgmp_api_key' ) == '' ) {
+
+	$generate_link = '<a onclick=\'window.open("' . wp_slash( $key_url ) . '", "newwindow", "width=700, height=600"); return false;\' href=\'' . $key_url . '\' class="wpgmp_key_btn fc-btn fc-btn-default btn-lg" >' . esc_html__( 'Generate API Key', 'wpgmp-google-map' ) . '</a>';
+
+	$form->add_element(
+		'html', 'wpgmp_key_btn', array(
+			'html'   => $generate_link,
+			'before' => '<div class="fc-4">',
+			'after'  => '</div>',
+		)
+	);
+
+} else {
+
+	$generate_link = '<a href="javascript:void(0);" class="wpgmp_check_key fc-btn fc-btn-default btn-lg" >' . esc_html__( 'Test API Key', 'wpgmp-google-map' ) . '</a><span class="wpgmp_maps_preview"></span>';
+
+	$form->add_element(
+		'html', 'wpgmp_key_btn', array(
+			'html'   => $generate_link,
+			'before' => '<div class="fc-4">',
+			'after'  => '</div>',
+		)
+	);
+}
+
+$form->set_col( 1 );
+
 
 $language = array(
-'en' => esc_html__( 'ENGLISH', 'wpgmp_google_map' ),
-'ar' => esc_html__( 'ARABIC', 'wpgmp_google_map' ),
-'eu' => esc_html__( 'BASQUE', 'wpgmp_google_map' ),
-'bg' => esc_html__( 'BULGARIAN', 'wpgmp_google_map' ),
-'bn' => esc_html__( 'BENGALI', 'wpgmp_google_map' ),
-'ca' => esc_html__( 'CATALAN', 'wpgmp_google_map' ),
-'cs' => esc_html__( 'CZECH', 'wpgmp_google_map' ),
-'da' => esc_html__( 'DANISH', 'wpgmp_google_map' ),
-'de' => esc_html__( 'GERMAN', 'wpgmp_google_map' ),
-'el' => esc_html__( 'GREEK', 'wpgmp_google_map' ),
-'en-AU' => esc_html__( 'ENGLISH (AUSTRALIAN)', 'wpgmp_google_map' ),
-'en-GB' => esc_html__( 'ENGLISH (GREAT BRITAIN)', 'wpgmp_google_map' ),
-'es' => esc_html__( 'SPANISH', 'wpgmp_google_map' ),
-'fa' => esc_html__( 'FARSI', 'wpgmp_google_map' ),
-'fi' => esc_html__( 'FINNISH', 'wpgmp_google_map' ),
-'fil' => esc_html__( 'FILIPINO', 'wpgmp_google_map' ),
-'fr' => esc_html__( 'FRENCH', 'wpgmp_google_map' ),
-'gl' => esc_html__( 'GALICIAN', 'wpgmp_google_map' ),
-'gu' => esc_html__( 'GUJARATI', 'wpgmp_google_map' ),
-'hi' => esc_html__( 'HINDI', 'wpgmp_google_map' ),
-'hr' => esc_html__( 'CROATIAN', 'wpgmp_google_map' ),
-'hu' => esc_html__( 'HUNGARIAN', 'wpgmp_google_map' ),
-'id' => esc_html__( 'INDONESIAN', 'wpgmp_google_map' ),
-'it' => esc_html__( 'ITALIAN', 'wpgmp_google_map' ),
-'iw' => esc_html__( 'HEBREW', 'wpgmp_google_map' ),
-'ja' => esc_html__( 'JAPANESE', 'wpgmp_google_map' ),
-'kn' => esc_html__( 'KANNADA', 'wpgmp_google_map' ),
-'ko' => esc_html__( 'KOREAN', 'wpgmp_google_map' ),
-'lt' => esc_html__( 'LITHUANIAN', 'wpgmp_google_map' ),
-'lv' => esc_html__( 'LATVIAN', 'wpgmp_google_map' ),
-'ml' => esc_html__( 'MALAYALAM', 'wpgmp_google_map' ),
-'it' => esc_html__( 'ITALIAN', 'wpgmp_google_map' ),
-'mr' => esc_html__( 'MARATHI', 'wpgmp_google_map' ),
-'nl' => esc_html__( 'DUTCH', 'wpgmp_google_map' ),
-'no' => esc_html__( 'NORWEGIAN', 'wpgmp_google_map' ),
-'pl' => esc_html__( 'POLISH', 'wpgmp_google_map' ),
-'pt' => esc_html__( 'PORTUGUESE', 'wpgmp_google_map' ),
-'pt-BR' => esc_html__( 'PORTUGUESE (BRAZIL)', 'wpgmp_google_map' ),
-'pt-PT' => esc_html__( 'PORTUGUESE (PORTUGAL)', 'wpgmp_google_map' ),
-'ro' => esc_html__( 'ROMANIAN', 'wpgmp_google_map' ),
-'ru' => esc_html__( 'RUSSIAN', 'wpgmp_google_map' ),
-'sk' => esc_html__( 'SLOVAK', 'wpgmp_google_map' ),
-'sl' => esc_html__( 'SLOVENIAN', 'wpgmp_google_map' ),
-'sr' => esc_html__( 'SERBIAN', 'wpgmp_google_map' ),
-'sv' => esc_html__( 'SWEDISH', 'wpgmp_google_map' ),
-'tl' => esc_html__( 'TAGALOG', 'wpgmp_google_map' ),
-'ta' => esc_html__( 'TAMIL', 'wpgmp_google_map' ),
-'te' => esc_html__( 'TELUGU', 'wpgmp_google_map' ),
-'th' => esc_html__( 'THAI', 'wpgmp_google_map' ),
-'tr' => esc_html__( 'TURKISH', 'wpgmp_google_map' ),
-'uk' => esc_html__( 'UKRAINIAN', 'wpgmp_google_map' ),
-'vi' => esc_html__( 'VIETNAMESE', 'wpgmp_google_map' ),
-'zh-CN' => esc_html__( 'CHINESE (SIMPLIFIED)', 'wpgmp_google_map' ),
-'zh-TW' => esc_html__( 'CHINESE (TRADITIONAL)', 'wpgmp_google_map' ),
+'en' => esc_html__( 'ENGLISH', 'wp-google-map-plugin' ),
+'ar' => esc_html__( 'ARABIC', 'wp-google-map-plugin' ),
+'eu' => esc_html__( 'BASQUE', 'wp-google-map-plugin' ),
+'bg' => esc_html__( 'BULGARIAN', 'wp-google-map-plugin' ),
+'bn' => esc_html__( 'BENGALI', 'wp-google-map-plugin' ),
+'ca' => esc_html__( 'CATALAN', 'wp-google-map-plugin' ),
+'cs' => esc_html__( 'CZECH', 'wp-google-map-plugin' ),
+'da' => esc_html__( 'DANISH', 'wp-google-map-plugin' ),
+'de' => esc_html__( 'GERMAN', 'wp-google-map-plugin' ),
+'el' => esc_html__( 'GREEK', 'wp-google-map-plugin' ),
+'en-AU' => esc_html__( 'ENGLISH (AUSTRALIAN)', 'wp-google-map-plugin' ),
+'en-GB' => esc_html__( 'ENGLISH (GREAT BRITAIN)', 'wp-google-map-plugin' ),
+'es' => esc_html__( 'SPANISH', 'wp-google-map-plugin' ),
+'fa' => esc_html__( 'FARSI', 'wp-google-map-plugin' ),
+'fi' => esc_html__( 'FINNISH', 'wp-google-map-plugin' ),
+'fil' => esc_html__( 'FILIPINO', 'wp-google-map-plugin' ),
+'fr' => esc_html__( 'FRENCH', 'wp-google-map-plugin' ),
+'gl' => esc_html__( 'GALICIAN', 'wp-google-map-plugin' ),
+'gu' => esc_html__( 'GUJARATI', 'wp-google-map-plugin' ),
+'hi' => esc_html__( 'HINDI', 'wp-google-map-plugin' ),
+'hr' => esc_html__( 'CROATIAN', 'wp-google-map-plugin' ),
+'hu' => esc_html__( 'HUNGARIAN', 'wp-google-map-plugin' ),
+'id' => esc_html__( 'INDONESIAN', 'wp-google-map-plugin' ),
+'it' => esc_html__( 'ITALIAN', 'wp-google-map-plugin' ),
+'iw' => esc_html__( 'HEBREW', 'wp-google-map-plugin' ),
+'ja' => esc_html__( 'JAPANESE', 'wp-google-map-plugin' ),
+'kn' => esc_html__( 'KANNADA', 'wp-google-map-plugin' ),
+'ko' => esc_html__( 'KOREAN', 'wp-google-map-plugin' ),
+'lt' => esc_html__( 'LITHUANIAN', 'wp-google-map-plugin' ),
+'lv' => esc_html__( 'LATVIAN', 'wp-google-map-plugin' ),
+'ml' => esc_html__( 'MALAYALAM', 'wp-google-map-plugin' ),
+'it' => esc_html__( 'ITALIAN', 'wp-google-map-plugin' ),
+'mr' => esc_html__( 'MARATHI', 'wp-google-map-plugin' ),
+'nl' => esc_html__( 'DUTCH', 'wp-google-map-plugin' ),
+'no' => esc_html__( 'NORWEGIAN', 'wp-google-map-plugin' ),
+'pl' => esc_html__( 'POLISH', 'wp-google-map-plugin' ),
+'pt' => esc_html__( 'PORTUGUESE', 'wp-google-map-plugin' ),
+'pt-BR' => esc_html__( 'PORTUGUESE (BRAZIL)', 'wp-google-map-plugin' ),
+'pt-PT' => esc_html__( 'PORTUGUESE (PORTUGAL)', 'wp-google-map-plugin' ),
+'ro' => esc_html__( 'ROMANIAN', 'wp-google-map-plugin' ),
+'ru' => esc_html__( 'RUSSIAN', 'wp-google-map-plugin' ),
+'sk' => esc_html__( 'SLOVAK', 'wp-google-map-plugin' ),
+'sl' => esc_html__( 'SLOVENIAN', 'wp-google-map-plugin' ),
+'sr' => esc_html__( 'SERBIAN', 'wp-google-map-plugin' ),
+'sv' => esc_html__( 'SWEDISH', 'wp-google-map-plugin' ),
+'tl' => esc_html__( 'TAGALOG', 'wp-google-map-plugin' ),
+'ta' => esc_html__( 'TAMIL', 'wp-google-map-plugin' ),
+'te' => esc_html__( 'TELUGU', 'wp-google-map-plugin' ),
+'th' => esc_html__( 'THAI', 'wp-google-map-plugin' ),
+'tr' => esc_html__( 'TURKISH', 'wp-google-map-plugin' ),
+'uk' => esc_html__( 'UKRAINIAN', 'wp-google-map-plugin' ),
+'vi' => esc_html__( 'VIETNAMESE', 'wp-google-map-plugin' ),
+'zh-CN' => esc_html__( 'CHINESE (SIMPLIFIED)', 'wp-google-map-plugin' ),
+'zh-TW' => esc_html__( 'CHINESE (TRADITIONAL)', 'wp-google-map-plugin' ),
 );
 
 $form->add_element( 'select', 'wpgmp_language', array(
-	'lable' => esc_html__( 'Map Language', 'wpgmp_google_map' ),
+	'lable' => esc_html__( 'Map Language', 'wp-google-map-plugin' ),
 	'current' => get_option( 'wpgmp_language' ),
-	'desc' => esc_html__( 'Choose your language for map. Default is English.', 'wpgmp_google_map' ),
+	'desc' => esc_html__( 'Choose your language for map. Default is English.', 'wp-google-map-plugin' ),
 	'options' => $language,
 	'before' => '<div class="fc-4">',
 	'after' => '</div>',
 ));
 
 $form->add_element( 'radio', 'wpgmp_scripts_place', array(
-	'lable' => esc_html__( 'Include Scripts in ', 'wpgmp_google_map' ),
-	'radio-val-label' => array( 'header' => esc_html__( 'Header','wpgmp_google_map' ),'footer' => esc_html__( 'Footer (Recommended)','wpgmp_google_map' ) ),
+	'lable' => esc_html__( 'Include Scripts in ', 'wp-google-map-plugin' ),
+	'radio-val-label' => array( 'header' => esc_html__( 'Header','wp-google-map-plugin' ),'footer' => esc_html__( 'Footer (Recommended)','wp-google-map-plugin' ) ),
 	'current' => get_option( 'wpgmp_scripts_place' ),
 	'class' => 'chkbox_class',
 	'default_value' => 'footer',
 ));
 
 $form->add_element('submit','wpgmp_save_settings',array(
-	'value' => esc_html__( 'Save Setting','wpgmp_google_map' ),
+	'value' => esc_html__( 'Save Setting','wp-google-map-plugin' ),
 	));
 $form->add_element('hidden','operation',array(
 	'value' => 'save',

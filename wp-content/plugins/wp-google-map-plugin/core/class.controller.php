@@ -158,7 +158,7 @@ if ( ! class_exists( 'Flippercode_Core_Controller' ) ) {
 				}
 			}
 
-			if ( isset( $_POST['entityID'] ) ) {
+			if ( isset( $_POST['entityID'] ) && !empty($_POST['entityID']) ) {
 				// Setting value of Id field in case of edit.
 				$this->entityObj->set_val( $this->entity.'_id',intval( wp_unslash( $_POST['entityID'] ) ) ); }
 

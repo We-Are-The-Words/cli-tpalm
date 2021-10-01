@@ -202,9 +202,11 @@ if ( ! class_exists( 'FlipperCode_Model_Base' ) ) {
 			} else {
 				$sortBy = $this->unique;
 			}
-
-			$this->query .= ' ORDER BY '.$sortBy.' '.($ascending ? 'ASC' : 'DESC')." $sqlLimit";
-
+			
+			$sort_order = ($ascending) ? 'ASC' : 'DESC';
+			//Sanitise the order and order by clause now using sanitize_sql_orderby
+			$order_by_clause = sanitize_sql_orderby($sortBy.' '.$sort_order);
+			$this->query .= ' ORDER BY '.$order_by_clause." $sqlLimit";
 			$thisObjectName = get_class( $this );
 			$cursors = FlipperCode_Database::reader( $this->query, $connection );
 

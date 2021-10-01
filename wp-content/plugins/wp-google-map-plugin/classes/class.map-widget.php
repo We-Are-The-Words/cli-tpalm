@@ -10,7 +10,7 @@ if ( ! class_exists( 'WPGMP_Google_Map_Widget_Class' ) ) {
 	/**
 	 * Initilize google map widget.
 	 * @author Flipper Code <hello@flippercode.com>
-	 * @version 3.0.0
+	 * @version 4.1.6
 	 * @package Maps
 	 */
 	class WPGMP_Google_Map_Widget_Class extends WP_Widget {
@@ -22,7 +22,7 @@ if ( ! class_exists( 'WPGMP_Google_Map_Widget_Class' ) ) {
 			parent::__construct(
 				'WPGMP_Google_Map_Widget_Class',
 				'WP Google Map Plugin',
-				array( 'description' => esc_html__( 'A widget to display google maps' , 'wpgmp_google_map' ) )
+				array( 'description' => esc_html__( 'A widget to display google maps' , 'wp-google-map-plugin' ) )
 			);
 		}
 		/**
@@ -70,7 +70,7 @@ if ( ! class_exists( 'WPGMP_Google_Map_Widget_Class' ) ) {
 		?>
 			<p>
 				<label for="<?php echo $this->get_field_id( 'map_title' );?>">
-					<?php esc_html_e( 'Title:' , 'wpgmp_google_map' );
+					<?php esc_html_e( 'Title:' , 'wp-google-map-plugin' );
 					
 					if(isset($instance) && !empty($instance) ){
 						$title = $instance['map_title'];
@@ -80,14 +80,14 @@ if ( ! class_exists( 'WPGMP_Google_Map_Widget_Class' ) ) {
 		
 					?>
 				</label>
-			<input type="text" value="<?php echo $title; ?>" name="<?php echo $this->get_field_name( 'map_title' ); ?>" class="widefat" style="margin-top:6px;">
+			<input type="text" value="<?php echo esc_html($title); ?>" name="<?php echo $this->get_field_name( 'map_title' ); ?>" class="widefat" style="margin-top:6px;">
 			</p>
 			<p>
 				<label for="<?php echo $this->get_field_id( 'map_id' );?>">
-					<?php esc_html_e( 'Select Your Map:' , 'wpgmp_google_map' );?>
+					<?php esc_html_e( 'Select Your Map:' , 'wp-google-map-plugin' );?>
 				</label>
 				<select id="<?php echo $this->get_field_id( 'map_id' ); ?>" name="<?php echo $this->get_field_name( 'map_id' ); ?>" class="widefat" style="margin-top:6px;">
-		        <option value=""><?php esc_html_e( 'Select map', 'wpgmp_google_map' ) ?></option>
+		        <option value=""><?php esc_html_e( 'Select map', 'wp-google-map-plugin' ) ?></option>
 				<?php
 				
 				if( !isset($instance) || !isset($instance['map_id']) )
@@ -96,7 +96,7 @@ if ( ! class_exists( 'WPGMP_Google_Map_Widget_Class' ) ) {
 				if ( ! empty( $map_records ) ) {
 					foreach ( $map_records as $key => $map_record ) {
 					?>
-						<option value="<?php echo $map_record->map_id; ?>"<?php selected( $map_record->map_id,$instance['map_id'] ); ?>><?php echo $map_record->map_title; ?></option>
+						<option value="<?php echo esc_attr($map_record->map_id); ?>"<?php selected( $map_record->map_id,$instance['map_id'] ); ?>><?php echo esc_html($map_record->map_title); ?></option>
 					<?php
 					}
 				}

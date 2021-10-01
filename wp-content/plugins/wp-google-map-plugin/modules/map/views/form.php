@@ -5,13 +5,11 @@
  * @package Maps
  */
 
-if ( isset( $_POST['save_entity_data'] ) )
-$data = $_POST;	
-
 global $wpdb;
 $modelFactory = new WPGMP_Model();
 $map_obj = $modelFactory->create_object( 'map' );
-if ( isset( $_GET['doaction'] ) and 'edit' == $_GET['doaction'] and isset( $_GET['map_id'] ) ) {
+if ( isset( $_GET['doaction'] ) && 'edit' == sanitize_key($_GET['doaction']) && isset( $_GET['map_id'] ) ) {
+	
 	$map_obj = $map_obj->fetch( array( array( 'map_id', '=', intval( wp_unslash( $_GET['map_id'] ) ) ) ) );
 	$map = $map_obj[0];
 	if(!empty($map)) {
@@ -30,29 +28,36 @@ if ( isset( $_GET['doaction'] ) and 'edit' == $_GET['doaction'] and isset( $_GET
 		$map->map_geotags = unserialize( $map->map_geotags );
 	}
 	
-	$data = (array) $map;
-} elseif ( ! isset( $_GET['doaction'] ) and isset( $response['success'] ) ) {
+	$_POST = (array) $map;
+} elseif ( ! isset( $_GET['doaction'] ) && isset( $response['success'] ) ) {
 	// Reset $_POST object for antoher entry.
-	unset( $data );
+	unset( $_POST );
 }
 
 $form  = new WPGMP_Template();
-if( isset($_GET['doaction']) && $_GET['doaction'] == 'edit') {
+if( isset($_GET['doaction']) && sanitize_key($_GET['doaction']) == 'edit' ) {
 	$edit_mode_params = array( 'page' => 'wpgmp_form_map','doaction' => 'edit', 'map_id' => intval( $_GET['map_id'] )  );
 	$form->form_action = esc_url ( add_query_arg( $edit_mode_params , esc_url( admin_url ('admin.php') ) ) );
 }else{
 	$form->form_action = esc_url ( add_query_arg( 'page', 'wpgmp_form_map', admin_url ('admin.php') )  );	
 }
-$form->set_header( esc_html__( 'Map Information', 'wpgmp_google_map' ), $response, esc_html__( 'Manage Maps', 'wpgmp_google_map' ), 'wpgmp_manage_map' );
+$form->set_header( esc_html__( 'Map Information', 'wp-google-map-plugin' ), $response, $enable_accordion = true, esc_html__( 'Manage Maps', 'wp-google-map-plugin' ), 'wpgmp_manage_map' );
+
+$form->add_element( 'group', 'wpgmp_map_info', array(
+	'value' => esc_html__( 'Map Information', 'wp-google-map-plugin' ),
+	'before' => '<div class="fc-12">',
+	'after' => '</div>',
+));
+
 $form->add_element('hidden', 'form_action_url', array('value' => $form->form_action ) );
 
 if( get_option( 'wpgmp_api_key' ) == '' ) {
 
-$link = '<a target="_blank" href="http://bit.ly/29Rlmfc">'.esc_html__("create google maps api key","wpgmp_google_map").'</a>';
-$setting_link = '<a target="_blank" href="' . admin_url( 'admin.php?page=wpgmp_manage_settings' ) . '">'.esc_html__("here","wpgmp_google_map").'</a>';
+$link = '<a target="_blank" href="https://console.developers.google.com/flows/enableapi?apiid=maps_backend,geocoding_backend,directions_backend,distance_matrix_backend,elevation_backend,places_backend&keyType=CLIENT_SIDE&reusekey=true">'.esc_html__("create google maps api key","wp-google-map-plugin").'</a>';
+$setting_link = '<a target="_blank" href="' . admin_url( 'admin.php?page=wpgmp_manage_settings' ) . '">'.esc_html__("here","wp-google-map-plugin").'</a>';
 	
 $form->add_element( 'message', 'wpgmp_key_required', array(
-	'value'  => sprintf( esc_html__( 'Google Maps API Key is missing. Follow instructions to %1$s and then insert your key %2$s.', 'wpgmp_google_map' ), $link, $setting_link ),
+	'value'  => sprintf( esc_html__( 'Google Maps API Key is missing. Follow instructions to %1$s and then insert your key %2$s.', 'wp-google-map-plugin' ), $link, $setting_link ),
 	'class' => 'fc-msg fc-danger',
 	'before' => '<div class="fc-12 wpgmp_key_required">',
 	'after' => '</div>',
@@ -75,7 +80,7 @@ $form->add_element('extensions','wpgmp_map_form',array(
 	'after' => '</div>',
 	));
 $form->add_element( 'submit', 'save_entity_data', array(
-	'value' => esc_html__( 'Save Map','wpgmp_google_map' ),
+	'value' => esc_html__( 'Save Map','wp-google-map-plugin' ),
 ));
 $form->add_element( 'hidden', 'operation', array(
 	'value' => 'save',

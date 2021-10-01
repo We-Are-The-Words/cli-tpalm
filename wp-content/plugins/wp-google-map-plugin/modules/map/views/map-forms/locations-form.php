@@ -30,7 +30,7 @@ if ( ! empty( $locations ) ) {
 		$assigned_categories = implode( ',',$assigned_categories );
 		$loc_checkbox = $form->field_checkbox('map_locations[]',array(
 			'value' => $loc->location_id,
-			'current' => (isset($data['map_locations']) && (in_array( $loc->location_id, (array) $data['map_locations'] )) ? $loc->location_id : ''),
+			'current' => (isset($_POST['map_locations']) && (in_array( $loc->location_id, (array) $_POST['map_locations'] )) ? sanitize_text_field($loc->location_id) : ''),
 			'class' => 'chkbox_class',
 			'before' => '<div class="fc-1">',
 			'after' => '</div>',
@@ -39,21 +39,23 @@ if ( ! empty( $locations ) ) {
 	}
 }
 
-$table_group = $form->field_html('map_location_listing',array(
-	'html' => "<h4>".esc_html__( 'Choose Locations', 'wpgmp_google_map' )."</h4>",
+$form->add_element( 'group', 'wpgmp_locations', array(
+	'value' => esc_html__( 'Choose Locations', 'wp-google-map-plugin' ),
+	'before' => '<div class="fc-12">',
+	'after' => '</div>',
 ));
 
-$table_group .= $form->field_select('select_all',array(
+$table_group = $form->field_select('select_all',array(
 	'options' => array(
-		'' => esc_html__('Choose','wpgmp_google_map'),
-		'select_all' => esc_html__('Select All','wpgmp_google_map'),
-		'deselect_all' => esc_html__('Deselect All','wpgmp_google_map')
+		'' => esc_html__('Choose','wp-google-map-plugin'),
+		'select_all' => esc_html__('Select All','wp-google-map-plugin'),
+		'deselect_all' => esc_html__('Deselect All','wp-google-map-plugin')
 		),
 	));
 
 $form->add_element('html','map_location_listing_div',array(
 	'html' =>$table_group,
-	'before' => '<div class="fc-12 wpgmp_location_selection fc-title-blue">',
+	'before' => '<div class="fc-12 wpgmp_location_selection">',
 	'after' => '</div>',
 	));
 
@@ -63,5 +65,5 @@ $form->add_element( 'table', 'map_selected_locations', array(
 		'before' => '<div class="fc-12">',
 		'after' => '</div>',
 		'id' => 'wpgmp_google_map_data_table',
-		'current' => (isset($data['map_locations'])) ? $data['map_locations'] : '',
+		'current' => (isset($_POST['map_locations'])) ? sanitize_text_field($_POST['map_locations']) : '',
 ));

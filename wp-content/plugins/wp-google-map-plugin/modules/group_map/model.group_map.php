@@ -2,7 +2,7 @@
 /**
  * Class: WPGMP_Model_Group_Map
  * @author Flipper Code <hello@flippercode.com>
- * @version 3.0.0
+ * @version 4.1.6
  * @package Maps
  */
 
@@ -37,8 +37,8 @@ if ( ! class_exists( 'WPGMP_Model_Group_Map' ) ) {
 		 */
 		function navigation() {
 			return array(
-			'wpgmp_form_group_map' => esc_html__( 'Add Marker Category', 'wpgmp_google_map' ),
-			'wpgmp_manage_group_map' => esc_html__( 'Marker Categories', 'wpgmp_google_map' ),
+			'wpgmp_form_group_map' => esc_html__( 'Add Marker Category', 'wp-google-map-plugin' ),
+			'wpgmp_manage_group_map' => esc_html__( 'Marker Categories', 'wp-google-map-plugin' ),
 			);
 
 		}
@@ -123,11 +123,11 @@ if ( ! class_exists( 'WPGMP_Model_Group_Map' ) ) {
 			$result = FlipperCode_Database::insert_or_update( $this->table, $data, $where );
 			
 			if ( false === $result ) {
-				$response['error'] = esc_html__( 'Something went wrong. Please try again.','wpgmp_google_map' );
+				$response['error'] = esc_html__( 'Something went wrong. Please try again.','wp-google-map-plugin' );
 			} elseif ( $entityID > 0 ) {
-				$response['success'] = esc_html__( 'Marker category updated successfully.','wpgmp_google_map' );
+				$response['success'] = esc_html__( 'Marker category updated successfully.','wp-google-map-plugin' );
 			} else {
-				$response['success'] = esc_html__( 'Marker category added successfully.','wpgmp_google_map' );
+				$response['success'] = esc_html__( 'Marker category added successfully.','wp-google-map-plugin' );
       		}
       		return $response;
 			

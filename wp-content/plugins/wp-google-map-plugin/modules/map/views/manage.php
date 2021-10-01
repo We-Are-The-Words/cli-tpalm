@@ -4,7 +4,17 @@
  * @package Maps
  */
   $form  = new WPGMP_Template();
-  echo $form->show_header();
+  echo wp_kses_post( $form->show_header() );
+  
+  if(!class_exists('WP_List_Table_Helper')){
+	
+	$tabular_file = WPGMP_CORE_CLASSES.'class.tabular.php';
+	if ( file_exists( $tabular_file ) ) {
+	   require_once( $tabular_file );
+	}
+	
+  }
+
 if ( class_exists( 'WP_List_Table_Helper' ) and ! class_exists( 'Wpgmp_Maps_Table' ) ) {
 
 	/**
@@ -50,7 +60,8 @@ if ( class_exists( 'WP_List_Table_Helper' ) and ! class_exists( 'Wpgmp_Maps_Tabl
 	$sortable  = array( 'map_title','map_width','map_height','map_zoom_level','map_type' );
 	$tableinfo = array(
 	'table' => $wpdb->prefix.'create_map',
-	'textdomain' => 'wpgmp_google_map',
+	'plugin' => 'wp-google-map-plugin',
+	'textdomain' => 'wp-google-map-plugin',
 	'singular_label' => 'map',
 	'plural_label' => 'maps',
 	'admin_listing_page_name' => 'wpgmp_manage_map',
@@ -60,15 +71,15 @@ if ( class_exists( 'WP_List_Table_Helper' ) and ! class_exists( 'Wpgmp_Maps_Tabl
 	'sortable' => $sortable,
 	'per_page' => 20,
 	'actions' => array( 'edit','delete','copy' ),
-	'bulk_actions'            => array( 'delete' => esc_html__( 'Delete', 'wpgmp-google-map' ) ),
+	'bulk_actions' => array( 'delete' => esc_html__( 'Delete', 'wp-google-map-plugin' ) ),
 	'col_showing_links' => 'map_title',
 	'searchExclude' => array( 'shortcodes' ),
 	'translation' => array(
-			'manage_heading'      => esc_html__( 'Manage Maps', 'wpgmp_google_map' ),
-			'add_button'          => esc_html__( 'Add Map', 'wpgmp_google_map' ),
-			'delete_msg'          => esc_html__( 'Maps deleted successfully', 'wpgmp_google_map' ),
-			'insert_msg'          => esc_html__( 'Map added successfully', 'wpgmp_google_map' ),
-			'update_msg'          => esc_html__( 'Map updated successfully', 'wpgmp_google_map' ),
+			'manage_heading'      => esc_html__( 'Manage Maps', 'wp-google-map-plugin' ),
+			'add_button'          => esc_html__( 'Add Map', 'wp-google-map-plugin' ),
+			'delete_msg'          => esc_html__( 'Maps deleted successfully', 'wp-google-map-plugin' ),
+			'insert_msg'          => esc_html__( 'Map added successfully', 'wp-google-map-plugin' ),
+			'update_msg'          => esc_html__( 'Map updated successfully', 'wp-google-map-plugin' ),
 	)
 	);
 	$obj = new Wpgmp_Maps_Table( $tableinfo );

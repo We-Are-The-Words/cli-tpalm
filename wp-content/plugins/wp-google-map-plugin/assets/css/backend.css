@@ -858,7 +858,7 @@ table.dataTable td {
 
  .fc-title-blue {
     color: rgba(0,0,0,.58);
-    border-left: solid 1px #e9b604;
+    /*border-left: solid 1px #e9b604;*/
 
 }
 
@@ -934,3 +934,47 @@ font-size: .9em;
 .toplevel_page_wpgmp_view_overview ul.fc-pro-features li:before{content: '✓';margin-right:8px;color:#2ecc71;font-weight:bold;}
 .toplevel_page_wpgmp_view_overview .fc-tabs-container{margin-bottom:0px!important;}
 #pro_link{text-decoration:underline!important;}
+
+.google-maps_page_wpgmp_manage_extentions .fc-row{margin-top: 20px;float: left;width: 100%;}
+.google-maps_page_wpgmp_manage_extentions .fc-row:first-child{margin-top: 0px;}
+#toplevel_page_wpgmp_view_overview .wp-submenu-wrap  li:last-child a{color:#f1c40f!important;}
+.google-maps_page_wpgmp_manage_extentions .fc-row{margin-top: 20px;float: left;width: 100%;}
+.google-maps_page_wpgmp_manage_extentions .fc-row:first-child{margin-top: 0px;}
+.wpgmp_extentions_listing .fc-row{width:100%;float:left;}
+.wpgmp_extentions_listing .view_all_extentions{ margin-top: 20px;text-align: center;margin: 0 auto;margin-top:35px;}
+.all_extention_link{text-decoration:none;background: #212F3D;padding: 10px 20px;color:#f1c40f ;font-weight: bold;}
+.all_extention_link:hover,.all_extention_link:focus,.all_extention_link:active{color:#f1c40f!important;}
+.wpgmp_maps_preview {
+    margin-left: 10px;
+    font-weight: bold;
+}
+
+.fcdoc-product-info .fc-divider .fcdoc-flexrow{ width:100%;}
+.list_premium_features .livedemo {
+    background-color: #a13ad1;
+}
+.list_premium_features .buynow {
+    background-color: #52ae59;
+}
+
+.list_premium_features .all_features{
+    background-color: #17b3e4;
+}
+.flippercode-ui .tablenav{
+    display: inline-block;
+        margin: 0 0px 38px !important;
+}
+.pagination-links a{
+    text-align: center;
+    text-decoration: none;
+    line-height: 22px;
+    padding-bottom: 0px; 
+}
+
+.fc-danger a{color:#721c24!important;}
+
+.buy_premium{
+    margin: 0.2em 0;
+    padding: 10px;
+    margin-bottom: .8em;
+}

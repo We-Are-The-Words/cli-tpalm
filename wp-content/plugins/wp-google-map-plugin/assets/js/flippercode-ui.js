@@ -57,6 +57,54 @@ jQuery(document).ready(function($) {
     $('.fc-modal').fcModal({});
     //Js Handler Code For Overview page
 
+
+    var allPanels = $('.custom-accordion > dd').hide();
+
+    $('.custom-accordion > dd:first-of-type').show();
+    $('.custom-accordion > dt:first-of-type').addClass('accordion-active');
+    $('.fc-help-right .custom-accordion > dd:first-of-type').hide();
+    $('.fc-help-right .custom-accordion > dt:first-of-type').removeClass('accordion-active');
+
+    $('.custom-accordion > dt').on('click', function() {
+        var $this = $(this);
+        var $target = $this.next(); 
+        if(!$this.hasClass('accordion-active')){
+            $this.parent().children('dd').slideUp();
+            jQuery('.custom-accordion > dt').removeClass('accordion-active');
+            $this.addClass('accordion-active');
+            $target.addClass('active').slideDown();
+        }else{
+            
+             $this.next('dd').slideUp();
+             $this.addClass('accordion-active');
+             jQuery('.custom-accordion > dt').removeClass('accordion-active');
+        }
+        return false;
+    });
+
+    $('.row-actions .edit a').append('<i class="fa fa-pencil"></i>');
+
+    $('.row-actions .delete a').append('<i class="fa fa-trash"></i>');
+	
+	$('.row-actions .copy a').append('<i class="fa fa-copy "></i>');
+	
+    $('.wp-list-table .check-column input[type="checkbox"]').wrap('<span class="checkbox"></span>'); 
+
+    $('.wp-list-table .check-column input[type="checkbox"]').after('<label></label>');
+
+    var table = $('.wp-list-table #the-list');    
+
+    table.on('click', 'tr', function (e) {
+
+        if ( $(this).hasClass('active') ) {
+
+            $(this).removeClass('active');
+
+        }else{
+            $(this).addClass('active');
+        }
+    });
+    
     $overviewPage = ($('.fcdoc-product-info').length > 0) ? true : false;
 
     if ($overviewPage) {
@@ -66,166 +114,7 @@ jQuery(document).ready(function($) {
         $('#user-suggestion,#purchase_code').keyup(function() {
             $(this).css('border', 'none');
         });
-        $('.refundbtn').click(function(e){
-            e.preventDefault();
-            var update_title = '';
-            var update_desc = '';
-
-            update_title = 'Get Refund';
-            update_desc = "<p>Have you tried our support yet? We'd recommend that you create a support or email us at support@flippercode.com to resolve your issues. </p> <p><div class='fc-divider'><div class='fc-12'><a class='fc-btn fc-btn-orange fc-btn-large' href='mailto:hello@flippercode.com' >Email Us </a>&nbsp;&nbsp;<a class='fc-btn fc-btn-blue fc-btn-large' href='http://www.flippercode.com/forums' target='_blank'>Support Ticket</a>&nbsp;&nbsp;<a class='fc-btn fc-btn-red fc-btn-large' href='https://codecanyon.net/refund_requests/new' target='_blank'>Fill Refund Form</a></div></div><br></p>";
-           
-            //trigger popup.
-            $('.fc-main #fc_overview_modal').find('.fc-modal-header h4').html(update_title);
-            $('.fc-main #fc_overview_modal').find('.fc-modal-body').html(update_desc);
-            $('.fc-main #fc_overview_modal').show(); 
-
-
-        });
-
-        $('body').on('click','input[name="wpgmp_update_plugin"]',function(e){
-            e.preventDefault();
-            var product_id = $('input[name="product_id"]').val();
-            var purchase_code = $('input[name="purchase_code"]').val();
-            if( purchase_code.length <=0 ) {
-                 $('input[name="purchase_code"]').css('border', '1px solid red');
-                return false;
-            }
-            if (purchase_code && product_id && $('input[name="operation"]').val() == "download_plugin" ) {
-               jQuery.ajax({
-                    type: "POST",
-                    url: ajaxUrl,
-                    dataType: 'json',
-                    data: {
-                        action: 'download_plugin',
-                        product_id: product_id,
-                        purchase_code : purchase_code,
-                        nonce : wpgmp_local.nonce,
-                    },
-                    beforeSend: function() {
-                        $('input[name="wpgmp_update_plugin"]').parent().find('.fc-loader').show();
-                    },
-
-                    success: function(data) {
-
-                    var update_title = '';
-                    var update_desc = '';
-                    console.log(data);
-                    if(data.status == 0 || data.purchase_verified === false ) {
-                        update_title = 'Update Failed';
-                        update_desc = "<div class='fc-msg'>Either your purchase code is invalid or expired. Please try again in few minutes. If problem exists continue, Please contact our support. <br> <input type='button' class='fc-btn fc-success'  value='Support Ticket'/></div>";    
-                    } else {
-                        update_title = 'Thank You for Downloading...';
-                        update_desc = "<div class='fc-msg'>Your purchase code is verified. Your plugin will be downloaded in few seconds.</div>";
-                 
-                    }
-                   
-                    //trigger popup.
-                    $('.fc-main #fc_overview_modal').find('.fc-modal-header h4').html(update_title);
-                    $('.fc-main #fc_overview_modal').find('.fc-modal-body').html(update_desc);
-
-                    }
-
-                });
-            } 
-        });
         
-         $('.fc-communication').click(function() {
-            var action_btn = $(this);
-           
-                jQuery.ajax({
-                    type: "POST",
-                    url: ajaxUrl,
-                    data: {
-                        nonce: wpgmp_local.nonce,
-                        action: 'fc_communication',
-                        operation: 'get_plugin_details',
-                        product: $('.fcdoc-product-info').data('current-product-slug'),
-                    },
-                    dataType: 'json',
-                    beforeSend: function() {
-                        if( $(action_btn).hasClass('fa-refresh')) {
-                            $(action_btn).addClass('fa-spin');
-                        }
-                       $(action_btn).closest('.fc-tabs-content').find('.fcdoc-loader').show();
-                    },
-
-                    success: function(data) {
-                     if( $(action_btn).hasClass('fa-spin')) {
-                            $(action_btn).removeClass('fa-spin');
-                        }    
-                    $(action_btn).closest('.fc-tabs-content').find('.fcdoc-loader').hide();
-
-                    if( data.status == 0 ) {
-                    $('.fc-main #fc_overview_modal').find('.fc-modal-header h4').html("Error");
-                    $('.fc-main #fc_overview_modal').find('.fc-modal-body').html("Something went wrong! Try again in few minutes.");
-                    $('.fc-main #fc_overview_modal').show(); 
-                    } else if( data.status == 1 ) {
-                        //success
-                      $('.fc-main #fc_overview_modal').find('.fc-modal-header h4').html(data.title);
-                    $('.fc-main #fc_overview_modal').find('.fc-modal-body').html(data.content);
-                    $('.fc-main #fc_overview_modal').show(); 
-                    
-                    }
-
-                    }
-
-                });
-
-        });
-
-        $('#submit-user-suggestion').click(function() {
-            var action_btn = $(this);
-            if ($('#user-email').val() == '') {
-                $('#user-email').css('border', '1px solid red');
-                return false;
-            } else if ($('#user-suggestion').val() == '') {
-                $('#user-suggestion').css('border', '1px solid red');
-                return false;
-            } else {
-
-                jQuery.ajax({
-                    type: "POST",
-                    url: ajaxUrl,
-                    data: {
-                        nonce: wpgmp_local.nonce,
-                        action: 'fc_communication',
-                        operation: 'submit_user_suggestion',
-                        product: $('.fcdoc-product-info').data('current-product-slug'),
-                        sender: $('#user-email').val(),
-                        suggestion: $('#user-suggestion').val(),
-                    },
-                    dataType: 'json',
-                    beforeSend: function() {
-
-                       $(action_btn).closest('form').find('.fcdoc-loader').show();
-                       $('#user-suggestion').val('');
-                    },
-
-                    success: function(data) {
-
-                    $(action_btn).closest('form').find('.fcdoc-loader').hide();
-
-                    if( data.status == 0 ) {
-                    $('.fc-main #fc_overview_modal').find('.fc-modal-header h4').html("Error");
-                    $('.fc-main #fc_overview_modal').find('.fc-modal-body').html("Something went wrong! Try again in few minutes.");
-                    $('.fc-main #fc_overview_modal').show(); 
-                    } else if( data.status == 1 ) {
-                        //success
-                    $('.fc-main #fc_overview_modal').find('.fc-modal-header h4').html(data.title);
-                    $('.fc-main #fc_overview_modal').find('.fc-modal-body').html(data.content);
-                    $('.fc-main #fc_overview_modal').show(); 
-                    
-                    }
-      
-
-                    }
-
-                });
-
-            }
-
-        });
-
         function cmpVersions(a, b) {
             var i, diff;
             var regExStrip0 = /(\.0+)+$/;
@@ -241,42 +130,6 @@ jQuery(document).ready(function($) {
             }
             return segmentsA.length - segmentsB.length;
         }
-
-        $('.check_for_updates_btn').click(function() {
-            var action_btn = $(this);
-            var current_version = $('.fcdoc-product-info').data('product-version');
-            jQuery.ajax({
-                type: "POST",
-                url: ajaxUrl,
-                data: {
-                    nonce: wpgmp_local.nonce,
-                    action: 'fc_communication',
-                    operation: 'compare_version',
-                    product: $('.fcdoc-product-info').data('current-product-slug'),
-                    current_version: current_version
-                },
-                dataType: 'json',
-                beforeSend: function() {
-                    $(action_btn).closest('.action').find('.fcdoc-loader').show();
-                },
-                success: function(data) {
-                    
-                    $(action_btn).closest('.action').find('.fcdoc-loader').hide();
-
-                    if( data.status == 0 ) {
-                        //error
-                    } else if( data.status == 1 ) {
-                        //success
-                    $('.fc-main #fc_overview_modal').find('.fc-modal-header h4').html(data.title);
-                    $('.fc-main #fc_overview_modal').find('.fc-modal-body').html(data.content);
-                    $('.fc-main #fc_overview_modal').show(); 
-                    
-                    }           
-                }
-
-            });
-
-        });
 
     }
 
@@ -324,10 +177,12 @@ jQuery(document).ready(function($) {
             },delay+2000);
 
     });
-            
-     $('.wpgmp_datepicker').datepicker({
-        dateFormat: 'dd-mm-yy'
-    });
+     
+    if($('.wpgmp_datepicker').length > 0) {        
+		 $('.wpgmp_datepicker').datepicker({
+			dateFormat: 'dd-mm-yy'
+		 });
+	}
 
 });
 /**************** End Overview Page JS *************************/

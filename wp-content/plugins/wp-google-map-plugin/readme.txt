@@ -1,4 +1,4 @@
-=== Plugin Name ===
+﻿=== Plugin Name ===
 
 Contributors:      flippercode
 Plugin Name:       WP Google Map Plugin
@@ -7,16 +7,16 @@ Author URI:        http://profiles.wordpress.org/flippercode/
 Author:            flippercode
 Donate link:       (a link for donating)
 Requires at least: 3.4
-Tested up to: 5.2.1
+Tested up to: 5.8.1
 Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-A Responsive Google Maps plugin to display custom markers on the google maps and show custom message with links on a marker click.
+A Responsive Google Maps plugin to display custom markers on the google maps and show custom message with links inside the infowindow when a marker is clicked.
 
 == Description ==
 
-This google maps plugin allows you to create google maps shortcodes to display responsive google maps on pages, widgets and custom templates. Show custom markers on each google maps and display messages with links on a marker click.
+This google maps plugin allows you to create google maps shortcodes to display responsive google maps on pages, widgets and custom templates. Show custom markers on each google maps and display messages inside infowindow on marker click.
 
 Google autosuggest enabled location form helps you to create unlimited markers and then assign markers to a google map. It's super easy.  
 
@@ -151,7 +151,32 @@ This section describes how to install the plugin and get it working.
 
 == Changelog ==
 
-= 4.1.0 =
+= 4.1.9 =
+* Fix : One warning and one notice fixed on add map page, code optimised.
+
+= 4.1.8 =
+* New : Dismissable notice to buy premium version plugin added.
+
+= 4.1.7 =
+* New : Better UI interface for backend forms. 
+
+= 4.1.6 =
+* Fix: Calling files remotely fixed. Removed shorthand URLs. Text domain corrected. WordPress tested upto version number updated. Data sanitisation & escaping work done. Unused code removed. Design issue fixed on manage location and manage maps page. New filter added.
+
+= 4.1.5 =
+* Fix: SQL vulnerability issue fixed. 
+
+= 4.1.4 =
+* Fix: SQL security issue fixed. 
+
+= 4.1.3 =
+* New: New hooks added before and after map rendering.
+* New: Extentions related information provided.
+
+= 4.1.2 =
+* Fix: Missing translation files added.
+
+= 4.1.1 =
 * New: Search control on map for easy location searching.
 * New: Filter markers by category.
 
@@ -301,7 +326,15 @@ Go to 'Manage Maps' and copy the shortcode for your map. Each map will have own 
 Yes, First create your map and then you can display your map in sidebar from widget section.
 
 = How to register google maps api key? =
-Go to [Google Maps API console](http://bit.ly/29Rlmfc) and you can create your google maps api key here. We have a guide [Important Changes in Google Maps](http://bit.ly/29Rlmfc)http://bit.ly/292gCV2 for troubleshooting releated to google maps api key.
+Go to [Google Maps API console]
+(https://console.developers.google.com/flows/enableapi?apiid=maps_backend,geocoding_backend,directions_backend,distance_matrix_backend,elevation_backend,places_backend&keyType=CLIENT_SIDE&reusekey=true&pli=1)
+and you can create your google maps api key here.
+ 
+We have a guide [Important Changes in Google Maps]
+(https://console.developers.google.com/flows/enableapi?apiid=maps_backend,geocoding_backend,directions_backend,distance_matrix_backend,elevation_backend,places_backend&keyType=CLIENT_SIDE&reusekey=true)
+
+For troubleshooting releated to [Google Maps Api Key] 
+(https://www.linkedin.com/pulse/important-changes-google-maps-api-v3-website-owners-sandeep-kumar)
 
 = How to upgrade to pro version? =
 You can purchase [Google Maps Pro Version](http://codecanyon.net/item/advanced-google-maps-plugin-for-wordpress/5211638) and then just keep your lite version deactivated and then activate the pro version. You'll not loss any of your data. Your all data will be migrated to pro version automatically. 

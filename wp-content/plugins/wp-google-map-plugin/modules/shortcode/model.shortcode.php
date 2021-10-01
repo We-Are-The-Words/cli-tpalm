@@ -2,7 +2,7 @@
 /**
  * Class: WPGMP_Model_Shortcode
  * @author Flipper Code <hello@flippercode.com>
- * @version 3.0.0
+ * @version 4.1.6
  * @package Maps
  */
 

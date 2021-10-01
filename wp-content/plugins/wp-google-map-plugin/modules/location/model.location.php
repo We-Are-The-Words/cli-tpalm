@@ -3,7 +3,7 @@
  * Class: WPGMP_Model_Location
  * @author Flipper Code <hello@flippercode.com>
  * @package Maps
- * @version 3.0.0
+ * @version 4.1.6
  */
 
 if ( ! class_exists( 'WPGMP_Model_Location' ) ) {
@@ -38,8 +38,8 @@ if ( ! class_exists( 'WPGMP_Model_Location' ) ) {
 		public function navigation() {
 
 			return array(
-			'wpgmp_form_location' => esc_html__( 'Add Location', 'wpgmp_google_map' ),
-			'wpgmp_manage_location' => esc_html__( 'Manage Locations', 'wpgmp_google_map' ),
+			'wpgmp_form_location' => esc_html__( 'Add Location', 'wp-google-map-plugin' ),
+			'wpgmp_manage_location' => esc_html__( 'Manage Locations', 'wp-google-map-plugin' ),
 			);
 		}
 		/**
@@ -123,6 +123,14 @@ PRIMARY KEY  (location_id)
 
 			//Check Validations
 			$this->verify( $_POST );
+			
+			if( !empty($_POST['location_latitude']) && ( filter_var($_POST['location_latitude'], FILTER_VALIDATE_FLOAT) === false || strpos($_POST['location_latitude'], ".") === false ) ){
+				$this->errors[] = esc_html__( 'Please enter a valid float value for latitude.','wp-google-map-plugin' );
+			}	
+			if( !empty($_POST['location_longitude']) && filter_var($_POST['location_longitude'], FILTER_VALIDATE_FLOAT) === false || strpos($_POST['location_longitude'], ".") === false  ) {
+				$this->errors[] = esc_html__( 'Please enter a valid float value for longitude.','wp-google-map-plugin' );
+			}
+			
 			if ( is_array( $this->errors ) and ! empty( $this->errors ) ) {
 				$this->throw_errors();
 			}
@@ -172,11 +180,11 @@ PRIMARY KEY  (location_id)
 			$result = FlipperCode_Database::insert_or_update( $this->table, $data, $where );
 
 			if ( false === $result ) {
-				$response['error'] = esc_html__( 'Something went wrong. Please try again.','wpgmp_google_map' );
+				$response['error'] = esc_html__( 'Something went wrong. Please try again.','wp-google-map-plugin' );
 			} elseif ( $entityID > 0 ) {
-				$response['success'] = esc_html__( 'Location updated successfully.','wpgmp_google_map' );
+				$response['success'] = esc_html__( 'Location updated successfully.','wp-google-map-plugin' );
 			} else {
-				$response['success'] = esc_html__( 'Location added successfully.','wpgmp_google_map' );
+				$response['success'] = esc_html__( 'Location added successfully.','wp-google-map-plugin' );
 			}
 			return $response;
 			

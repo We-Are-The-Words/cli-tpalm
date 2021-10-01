@@ -16,6 +16,19 @@ jQuery(document).ready(function($) {
         }
     });
 
+    $(".wpgmp_check_key").click(function() {
+        $('.wpgmp_maps_preview').html("...");
+        var wpgmp_maps_key = $("input[name='wpgmp_api_key']").val();
+        var address = 'london';
+        $.get("https://maps.googleapis.com/maps/api/geocode/json?address=1600+Amphitheatre+Parkway,+Mountain+View,+CA&key=" + wpgmp_maps_key, function(data) {
+            if (data.status == 'OK') {
+                $('.wpgmp_maps_preview').html("Perfect!");
+            } else {
+                $('.wpgmp_maps_preview').html(data.error_message);
+            }
+        });
+    });
+
     $("select[name='map_id']").change(function() {
         $(this).closest('form').submit();
     });
@@ -167,6 +180,23 @@ jQuery(document).ready(function($) {
     });
 
     $('.wpgmp-overview .color').wpColorPicker();
+    
+    $(".buy_premium .hide_buy_notice").click(function() {
+		
+		$('.buy_premium').slideUp('slow');
+		var ajaxdata = { action: 'wpgmp_hide_buy_notice', _wpgmp_nonce : wpgmp_local.nonce  }
+        jQuery.ajax({
+				url : wpgmp_local.urlforajax,
+				type : 'post',
+				dataType: 'json',
+				data : ajaxdata,
+				beforeSend: function() {},
+				success : function( response ) {}
+
+		});
+
+	});
+	
 });
 
 function send_icon_to_map(imagesrc, target) {

@@ -5,14 +5,11 @@
  * @package Maps
  */
 
-if ( isset( $_POST['create_group_map_location'] ) )
-$data = $_POST;	
-
 global $wpdb;
 $modelFactory = new WPGMP_Model();
 $category = $modelFactory->create_object( 'group_map' );
 $categories = (array) $category->fetch();
-if ( isset( $_GET['doaction'] ) &&  'edit' == $_GET['doaction'] && isset( $_GET['group_map_id'] ) ) {
+if ( isset( $_GET['doaction'] ) &&  'edit' == sanitize_key($_GET['doaction']) && isset( $_GET['group_map_id'] ) ) {
 	$category_obj   = $category->fetch( array( array( 'group_map_id', '=', intval( wp_unslash( $_GET['group_map_id'] ) ) ) ) );
 	$_POST = (array) $category_obj[0];
 } elseif ( ! isset( $_GET['doaction'] ) && isset( $response['success'] ) ) {
@@ -27,7 +24,13 @@ if( isset($_GET['doaction']) && $_GET['doaction'] == 'edit') {
 	$form->form_action = esc_url ( add_query_arg( 'page', 'wpgmp_form_group_map', admin_url ('admin.php') )  );	
 }
 
-$form->set_header( esc_html__( 'Marker Category', 'wpgmp_google_map' ), $response, esc_html__( 'Manage Marker Categories', 'wpgmp_google_map' ), 'wpgmp_manage_group_map' );
+$form->set_header( esc_html__( 'Marker Category', 'wp-google-map-plugin' ), $response, $enable_accordion = false, esc_html__( 'Manage Marker Categories', 'wp-google-map-plugin' ), 'wpgmp_manage_group_map' );
+
+$form->add_element( 'group', 'wpgmp_marker_cat', array(
+	'value' => esc_html__( 'Marker Category', 'wp-google-map-plugin' ),
+	'before' => '<div class="fc-12">',
+	'after' => '</div>',
+));
 
 if ( is_array( $categories ) ) {
 	$markers = array( ' ' => 'Please Select' );
@@ -36,31 +39,31 @@ if ( is_array( $categories ) ) {
 	}
 
 	$form->add_element('select', 'group_parent', array(
-		'lable' => esc_html__( 'Parent Category', 'wpgmp_google_map' ),
-		'current' => (isset( $_POST['group_parent'] ) and ! empty( $_POST['group_parent'] )) ? intval( wp_unslash( $_POST['group_parent'] ) ) : '',
-		'desc' => esc_html__( 'Assign parent category if any.', 'wpgmp_google_map' ),
+		'lable' => esc_html__( 'Parent Category', 'wp-google-map-plugin' ),
+		'current' => (isset( $_POST['group_parent'] ) && ! empty( $_POST['group_parent'] )) ? intval( wp_unslash( $_POST['group_parent'] ) ) : '',
+		'desc' => esc_html__( 'Assign parent category if any.', 'wp-google-map-plugin' ),
 		'options' => $markers,
 	));
 
 }
 
 $form->add_element('text', 'group_map_title', array(
-	'lable' => esc_html__( 'Marker Category Title', 'wpgmp_google_map' ),
-	'value' => (isset( $_POST['group_map_title'] ) and ! empty( $_POST['group_map_title'] )) ? sanitize_text_field( wp_unslash( $_POST['group_map_title'] ) ) : '',
+	'lable' => esc_html__( 'Marker Category Title', 'wp-google-map-plugin' ),
+	'value' => (isset( $_POST['group_map_title'] ) && ! empty( $_POST['group_map_title'] )) ? sanitize_text_field( wp_unslash( $_POST['group_map_title'] ) ) : '',
 	'id' => 'group_map_title',
-	'desc' => esc_html__( 'Enter here marker category title.', 'wpgmp_google_map' ),
+	'desc' => esc_html__( 'Enter here marker category title.', 'wp-google-map-plugin' ),
 	'class' => 'create_map form-control',
-	'placeholder' => esc_html__( 'Marker Category Title', 'wpgmp_google_map' ),
+	'placeholder' => esc_html__( 'Marker Category Title', 'wp-google-map-plugin' ),
 	'required' => true,
 ));
 
 
 $form->add_element('image_picker', 'group_marker', array(
-	'lable' => esc_html__( 'Choose Marker Image', 'wpgmp_google_map' ),
+	'lable' => esc_html__( 'Choose Marker Image', 'wp-google-map-plugin' ),
 	'src' => (isset( $_POST['group_marker'] ) ) ? wp_unslash( $_POST['group_marker'] ) : WPGMP_IMAGES.'/default_marker.png',
 	'required' => false,
-	'choose_button' => esc_html__( 'Choose', 'wpgmp_google_map' ),
-	'remove_button' => esc_html__( 'Remove','wpgmp_google_map' ),
+	'choose_button' => esc_html__( 'Choose', 'wp-google-map-plugin' ),
+	'remove_button' => esc_html__( 'Remove','wp-google-map-plugin' ),
 	'id' => 'marker_category_icon',
 ));
 

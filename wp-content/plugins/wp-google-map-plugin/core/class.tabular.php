@@ -21,6 +21,11 @@ if ( ! class_exists( 'WP_List_Table_Helper' ) ) {
 	 */
 	class WP_List_Table_Helper extends WP_List_Table {
 
+	/**
+	 * Plugin name.
+	 * @var string
+	 */
+		var $plugin;
 		/**
 	 * Table name.
 	 * @var string
@@ -196,16 +201,16 @@ if ( ! class_exists( 'WP_List_Table_Helper' ) ) {
 		 * Initialize table listing.
 		 */
 		public function init_listing() {
-
+	
 			if ( ! empty( $this->currenttimestamp_field ) ) {  // Load extra resources if we want to show time based filters in listing table.
 
 				wp_enqueue_script( 'jquery-ui-datepicker' );
-				wp_enqueue_style( 'jquery-style', 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/themes/smoothness/jquery-ui.css' );
+      			wp_enqueue_style( 'jquery-style', plugins_url($this->plugin).'/assets/css/jquery-ui-style.css' );
 
 			}
 			$this->prepare_items();
 
-			if ( ! empty( $_GET['doaction'] ) and ! empty( $_GET[ $this->primary_col ] ) ) {
+			if ( isset($_GET['doaction']) && !empty( $_GET['doaction'] ) && !empty( $_GET[ $this->primary_col ] ) ) {
 				$this->now_action = $function_name = sanitize_text_field( wp_unslash( $_GET['doaction'] ) );
 				if ( false != strpos( sanitize_text_field( wp_unslash( $_GET['doaction'] ) ), '-' ) ) {
 					$function_name = str_replace( '-','',$function_name ); }
@@ -219,9 +224,7 @@ if ( ! class_exists( 'WP_List_Table_Helper' ) ) {
 		/**
 		 * Edit action.
 		 */
-		public function edit() {
-
-		}
+		public function edit() {}
 		/**
 		 * Delete action.
 		 */
@@ -229,8 +232,8 @@ if ( ! class_exists( 'WP_List_Table_Helper' ) ) {
 
 			global $wpdb;
 			$id = intval( wp_unslash( $_GET[ $this->primary_col ] ) );
-			$query = "DELETE FROM {$this->table} WHERE {$this->primary_col} = ".$id;
-			$del = $wpdb->query( $query );
+			//Prepared Query For Safe Execution
+			$wpdb->query( $wpdb->prepare( 'DELETE FROM '.$this->table.' WHERE '.$this->primary_col.' = %d', $id	) );
 			$this->prepare_items();
 			$this->response['success'] = $this->translation['delete_msg'];
 			$this->listing();
@@ -255,7 +258,7 @@ if ( ! class_exists( 'WP_List_Table_Helper' ) ) {
 								</span></h4>
 							</div>
 						<div class="wpgmp-overview">
-	<?php $this->show_notification( $this->response ); ?>
+							<?php $this->show_notification( $this->response ); ?>
 							<fieldset>
 							<form method="post" action="<?php echo admin_url( 'admin.php?page='.$this->admin_listing_page_name ); ?>">
 							<?php
@@ -307,8 +310,9 @@ if ( ! class_exists( 'WP_List_Table_Helper' ) ) {
 
 			if ( ! empty( $this->sql ) ) {
 				global $wpdb;
+				//$this->sql is already prepared query if provided
 				$results = $wpdb->get_results( $this->sql );
-				if(is_array($results) and !empty($results)) {
+				if(is_array($results) && !empty($results)) {
 					foreach ( $results[0] as $column_name => $column_value ) {    // Get all columns by provided returned by sql query(Preparing Columns Array).
 					if(array_key_exists($column_name, $this->columns)) {
 						$this->columns[ $column_name ] = $this->columns[$column_name];
@@ -343,7 +347,7 @@ if ( ! class_exists( 'WP_List_Table_Helper' ) ) {
 		 */
 		function column_default( $item, $column_name ) {
 			// Return Default values from db except current timestamp field. If currenttimestamp_field is encountered return formatted value.
-			if ( ! empty( $this->currenttimestamp_field ) and $column_name == $this->currenttimestamp_field ) {
+			if ( ! empty( $this->currenttimestamp_field ) && $column_name == $this->currenttimestamp_field ) {
 				$return = date( 'F j, Y',strtotime( $item->$column_name ) );
 			} else if ( $column_name == $this->col_showing_links ) {
 				$actions = array();
@@ -370,28 +374,14 @@ if ( ! class_exists( 'WP_List_Table_Helper' ) ) {
 		 */
 		function column_cb($item) {
 			return sprintf( '<input type="checkbox" name="id[]" value="%s" />', $item->{$this->primary_col} ); }
-		/**
-		 * Sorting Order
-		 * @param  string $a First element.
-		 * @param  string $b Second element.
-		 * @return string    Winner element.
-		 */
-		function usort_reorder( $a, $b ) {
-
-			$orderby = ( ! empty( $_GET['orderby'] ) ) ? wp_unslash( $_GET['orderby'] ) : '';
-			$order = ( ! empty( $_GET['order'] ) ) ? wp_unslash( $_GET['order'] ) : 'asc';
-			$result = strcmp( $a[ $orderby ], $b[ $orderby ] );
-			return ( 'asc' == $order ) ? $result : -$result;
-		}
+		
 		/**
 		 * Get bulk actions.
 		 * @return array Bulk action listing.
 		 */
 		function get_bulk_actions() {
 
-			$actions = array(
-			'delete'    => 'Delete',
-			);
+			$actions = array( 'delete' => 'Delete' );
 			$actions = array_merge( $actions, (array) $this->bulk_actions );
 			return $actions;
 		}
@@ -400,12 +390,13 @@ if ( ! class_exists( 'WP_List_Table_Helper' ) ) {
 		 * @return array Records ID.
 		 */
 		function get_user_selected_records() {
-
+			
 			$ids = isset( $_REQUEST['id'] ) ? wp_unslash( $_REQUEST['id'] ) : array();
 			if ( is_array( $ids ) ) { $ids = implode( ',', $ids ); }
 			if ( ! empty( $ids ) ) {
 				return $ids; }
 		}
+		
 		/**
 		 * Process bulk actions.
 		 */
@@ -414,21 +405,46 @@ if ( ! class_exists( 'WP_List_Table_Helper' ) ) {
 			global $wpdb;
 			$this->now_action = $this->current_action();
 			$ids = $this->get_user_selected_records();
-			if ( 'delete' === $this->current_action() and ! empty( $ids ) ) {
-
-				$query = "DELETE FROM {$this->table} WHERE {$this->primary_col} IN($ids)";
-				$del = $wpdb->query( $query );
+			
+			if ( 'delete' === $this->current_action() && !empty( $ids ) ) {
+				
+				//Prepared Query For Safe Execution	
+				$ids = explode(',',$ids);
+				$deleteCount = count($ids);
+				$stringPlaceholders = array_fill(0, $deleteCount, '%s');
+				$placeholdersForIds = implode(', ', $stringPlaceholders);
+				$query = "DELETE FROM {$this->table} WHERE {$this->primary_col} IN ($placeholdersForIds)";
+				$del = $wpdb->query( $wpdb->prepare($query, $ids) );
 				$this->response['success'] = $this->translation['delete_msg'];
 
-			} else if ( 'export_csv' === $this->current_action() ) {
+			} else if ( 'export_location_csv' === $this->current_action() || 'export_csv' === $this->current_action() && ! empty( $ids ) ) {
+				
 				ob_clean();
+				
 				global $wpdb;
 				$ids = $this->get_user_selected_records();
-				$ids = ( ! empty( $ids )) ? " WHERE {$this->primary_col} IN($ids) " : '';
+				$ids = explode(',',$ids);
+				$exportCount = count($ids);
+				$stringPlaceholders = array_fill(0, $exportCount, '%s');
+				$placeholdersForIds = implode(', ', $stringPlaceholders);
+				$prepared_query = ( ! empty( $ids )) ? " WHERE {$this->primary_col} IN ($placeholdersForIds) " : '';
+				
 				$columns = array_keys( $this->columns );
 				$columns = (count( $columns ) == 0) ? $columns[0] : implode( ',',$columns );
-				$query = (empty( $this->sql )) ? "SELECT $columns FROM ".$this->table.$ids." order by {$this->primary_col} desc" : $this->sql;
-				$data = $wpdb->get_results( $query,ARRAY_A );
+				if(empty( $this->sql )){
+					
+					//Sanitise the order and order by clause now using sanitize_sql_orderby
+					$order_by_clause = sanitize_sql_orderby( $this->primary_col.' desc' );
+					$query = "SELECT $columns FROM ".$this->table.$prepared_query." Order By {$order_by_clause}";
+					$data = $wpdb->get_results( $wpdb->prepare($query, $ids), ARRAY_A );
+				
+				}else{
+					
+					$query =  $this->sql;
+					$data = $wpdb->get_results( $query,ARRAY_A );
+					
+				}
+				
 				$tablerecords = array();
 				if ( ! empty( $this->sql ) ) {
 					$col_key_value = array();
@@ -445,6 +461,7 @@ if ( ! class_exists( 'WP_List_Table_Helper' ) ) {
 					$tablerecords[] = $entry;
 
 				}
+								
 				header( 'Content-Type: application/csv' );
 				header( "Content-Disposition: attachment; filename=\"{$this->plural_label}-Records.csv\";" );
 				header( 'Pragma: no-cache' );
@@ -476,13 +493,15 @@ if ( ! class_exists( 'WP_List_Table_Helper' ) ) {
 		 */
 		public function show_message($message, $errormsg = false) {
 
-			if ( empty( $message ) ) {
-				return; }
+			if ( empty( $message ) )
+				return;
+				
 			if ( $errormsg ) {
-				echo "<div class='fc-msg fc-msg-info'>{$message}</div>";
-			} else { 		echo "<div class='fc-msg fc-success'>{$message}</div>"; }
+				echo "<div class='fc-msg fc-msg-info'>".esc_html($message)."</div>";
+			} else { echo "<div class='fc-msg fc-success'>".esc_html($message)."</div>"; }
 
 		}
+		
 		/**
 		 * Prepare records before print.
 		 */
@@ -494,49 +513,79 @@ if ( ! class_exists( 'WP_List_Table_Helper' ) ) {
 			$sortable = $this->get_sortable_columns();
 			$this->_column_headers = array( $columns, $hidden, $sortable );
 			$this->process_bulk_action();
-			// Check whether query must be build through table name or an sql is provided by developer.
+						
 			$query = (empty( $this->sql )) ? 'SELECT * FROM '.$this->table : $this->sql;
-			if ( $this->admin_listing_page_name == @$_GET['page'] && '' != @$_REQUEST['s'] ) {
+			
+			if ( isset($_GET['page']) && !empty($_GET['page']) && $this->admin_listing_page_name == sanitize_key($_GET['page']) && isset($_REQUEST['s']) && !empty($_REQUEST['s']) ) {
 
-				$s = @$_REQUEST['s'];
-				$first_column;
+				$_GET['page'] = sanitize_key( $_GET['page'] );
+				$s = sanitize_text_field( $_REQUEST['s'] );
+				$first_column = '';
 				$remaining_columns = array();
-				$basic_search_query = '';
+				$prepare_query_with_placeholders = '';
+				$prepare_args_values = array();
 				foreach ( $this->columns as $column_name => $columnlabel ) {
 
 					if ( "{$this->primary_col}" == $column_name ) {
 						continue;
-					} else {
+					} 
+					else {
+						
 						if ( empty( $first_column ) ) {
-							$first_column = $column_name;
-							$basic_search_query = " WHERE {$column_name} LIKE '%".$s."%'";
+							
+							  $first_column = $column_name;
+							  $prepare_args_values[] = $wpdb->esc_like($s);
+							  $prepare_query_with_placeholders = " WHERE {$column_name} LIKE '%%%s%%'";
+							  
 						} else {
-							$remaining_columns[] = $column_name;
+							
+							$remaining_columns[] = $column_name; 
 							if ( ! @in_array( $column_name,$this->searchExclude ) ) {
-								$basic_search_query .= " or {$column_name} LIKE '%".$s."%'"; }
+								
+								$prepare_args_values[] = $wpdb->esc_like($s);
+								$prepare_query_with_placeholders .= " or {$column_name} LIKE '%%%s%%'"; }
+								
 						}
 					}
 				}
-
-				$query_to_run = $query.$basic_search_query;
-				$query_to_run .= " order by {$this->primary_col} desc";
-
-			} else if ( ! empty( $_GET['orderby'] ) and ! empty( $_GET['order'] ) ) {
-				$orderby = ( ! empty( $_GET['orderby'] ) ) ? wp_unslash( $_GET['orderby'] ) : $this->primary_col;
-				$order   = ( ! empty( $_GET['order'] ) ) ? wp_unslash( $_GET['order'] ) : 'asc';
+				
+				
+				//Sanitise the order and order by clause now using sanitize_sql_orderby
+				$order_by_clause = sanitize_sql_orderby( $this->primary_col.' desc' );
+				
+				$final_prepared_query = $wpdb->prepare( 'SELECT * FROM '.$this->table. $prepare_query_with_placeholders. ' Order By '.$order_by_clause, $prepare_args_values );
+				
+				//Prepared Query For Safe Execution
+				$this->data = $wpdb->get_results( $final_prepared_query );
+				
+			} else if ( isset($_GET['orderby']) && ! empty( $_GET['orderby'] ) && isset($_GET['order']) && ! empty( $_GET['order'] ) ) {
+				
 				$query_to_run = $query;
-				$query_to_run .= " order by {$orderby} {$order}";
+				
+				//First sanitising the basic url parameter string & also cross check in whitelist array
+				$orderby = ( !empty( $_GET['orderby'] ) && in_array( sanitize_key( $_GET['orderby'] ), $this->sortable ) ) ? sanitize_key( $_GET['orderby'] ) : $this->primary_col;
+				$order   = ( !empty( $_GET['order'] ) ) ? sanitize_key( $_GET['order'] ) : 'asc';
+				
+				//Then sanitise the order and order by clause now using sanitize_sql_orderby
+				$order_by_clause = sanitize_sql_orderby($orderby.' '.$order);
+				$query_to_run .= " Order By {$order_by_clause}";
+				$this->data = $wpdb->get_results( $query_to_run );
+				
 			} else {
+				
 				$query_to_run = $query;
 				if ( ! empty( $this->currenttimestamp_field ) ) {
-					$query_to_run = $this->filter_query( $query_to_run ); }
-				$query_to_run .= " order by {$this->primary_col} desc";
+				$query_to_run = $this->filter_query( $query_to_run ); }
+				
+				//Sanitise the order and order by clause now using sanitize_sql_orderby
+				$order_by_clause = sanitize_sql_orderby( $this->primary_col.' desc' );
+				$query_to_run .= " Order By {$order_by_clause}";
+				$this->data = $wpdb->get_results( $query_to_run );
 			}
-
-			$this->data = $wpdb->get_results( $query_to_run );
+			
 			$current_page = $this->get_pagenum();
 			$total_items = count( $this->data );
-			if(is_array($this->data) and !empty($this->data)) {
+			if(is_array($this->data) && !empty($this->data)) {
 				$this->found_data = @array_slice( $this->data,( ( $current_page -1 ) * $this->per_page ), $this->per_page );
 			} else {
 				$this->found_data = array();
@@ -548,46 +597,49 @@ if ( ! class_exists( 'WP_List_Table_Helper' ) ) {
 			$this->items = $this->found_data;
 
 		}
+		
 		/**
 		 * Extra Filter selection box at the top of table.
 		 * @param  string $which Top or Bottom.
 		 */
 		function extra_tablenav( $which ) {
+			
 			$text = ( 'top' == $which ) ? $this->toptext : $this->bottomtext;
-			echo $text;
-			if ( 'top' != $which ) {
-				return; }
-
+			echo esc_html($text);
+			
+			if ( 'top' != $which ) { return; }
+	
 			if ( ! empty( $this->currenttimestamp_field ) ) {
-				$filter_by_post = sanitize_text_field( wp_unslash( $_POST['filter_by'] ) );
-			?>
-			<div class="alignleft actions">
-			Filter By:
-			<select name="filter_by" style="float:none;">
-			<option value="">Select Filter Criteria</option>
-			<option value="today" <?php selected( $filter_by_post, 'today' ); ?>>Today</option>
-		<option value="yesterday" <?php selected( $filter_by_post, 'yesterday' ); ?>>Yesterday</option>
-		<option value="this_week" <?php selected( $filter_by_post, 'this_week' ); ?>>This Week</option>
-		<option value="this_month" <?php selected( $filter_by_post, 'this_month' ); ?>>This Month</option>
-		<option value="last_3_months" <?php selected( $filter_by_post, 'last_3_months' ); ?>>Last 3 Months</option>
-		<option value="last_6_months" <?php selected( $filter_by_post, 'last_6_months' ); ?>>Last 6 Months</option>
-		<option value="last_year" <?php selected( $filter_by_post, 'last_year' ); ?>>Last Year</option>
-		<option value="custom" <?php selected( $filter_by_post, 'custom' ); ?>>Custom</option>
-		</select>
-		<?php
-		if ( wp_unslash( $_POST['from_date'] ) || wp_unslash( $_POST['to_date'] ) ) {
-			$display = 'inline';
-		} else { $display = 'none'; }
-		?>
-		<div id="custom_filter" style="display:<?php echo $display; ?>;"> From
-	<input type="text" class="wpgmp_datepicker" name="from_date" id="from_date" value="<?php echo sanitize_text_field( $_POST['from_date'] );  ?>">
-	To
-	<input type="text" class="wpgmp_datepicker" name="to_date" id="to_date" value="<?php echo sanitize_text_field( $_POST['to_date'] );  ?>">
-	</div>
+			
+			  $filter_by_post = sanitize_text_field( wp_unslash( $_POST['filter_by'] ) );
+			  ?>
+			  <div class="alignleft actions">
+				<?php esc_html_e('Filter By :'); ?>
+				<select name="filter_by" style="float:none;">
+				<option value=""><?php esc_html_e('Select Filter Criteria'); ?></option>
+				<option value="today" <?php selected( $filter_by_post, 'today' ); ?>><?php esc_html_e('Today'); ?></option>
+				<option value="yesterday" <?php selected( $filter_by_post, 'yesterday' ); ?>><?php esc_html_e('Yesterday'); ?></option>
+				<option value="this_week" <?php selected( $filter_by_post, 'this_week' ); ?>><?php esc_html_e('This Week'); ?></option>
+				<option value="this_month" <?php selected( $filter_by_post, 'this_month' ); ?>><?php esc_html_e('This Month'); ?></option>
+				<option value="last_3_months" <?php selected( $filter_by_post, 'last_3_months' ); ?>><?php esc_html_e('Last 3 Months'); ?></option>
+				<option value="last_6_months" <?php selected( $filter_by_post, 'last_6_months' ); ?>><?php esc_html_e('Last 6 Months'); ?></option>
+				<option value="last_year" <?php selected( $filter_by_post, 'last_year' ); ?>><?php esc_html_e('Last Year'); ?></option>
+				<option value="custom" <?php selected( $filter_by_post, 'custom' ); ?>><?php esc_html_e('Custom'); ?></option>
+				</select>
+				<?php
+				if ( wp_unslash( $_POST['from_date'] ) || wp_unslash( $_POST['to_date'] ) ) {
+					$display = 'inline';
+				} else { $display = 'none'; }
+				?>
+				<div id="custom_filter" style="display:<?php echo esc_html($display); ?>;"> From
+				<input type="text" class="wpgmp_datepicker" name="from_date" id="from_date" value="<?php echo sanitize_text_field( $_POST['from_date'] );  ?>">
+				To
+				<input type="text" class="wpgmp_datepicker" name="to_date" id="to_date" value="<?php echo sanitize_text_field( $_POST['to_date'] );  ?>">
+			</div>
 
-	<?php submit_button( 'Filter', 'button', 'filter_action', false, array( 'id' => 'post-query-submit' ) ); ?>
-	</div>
-	<?php
+				<?php submit_button( 'Filter', 'button', 'filter_action', false, array( 'id' => 'post-query-submit' ) ); ?>
+			</div>
+			<?php
 
 			}
 		}
@@ -631,8 +683,11 @@ if ( ! class_exists( 'WP_List_Table_Helper' ) ) {
 				'&laquo;'
 			);
 
-			if ( isset( $_REQUEST['s'] ) and ! empty( $_REQUEST['s'] ) ) {
-				$current_url = add_query_arg( 's', $_REQUEST['s'], $current_url ); }
+			if ( isset( $_REQUEST['s'] ) && !empty( $_REQUEST['s'] ) ) {
+				
+				$_REQUEST['s'] = sanitize_text_field($_REQUEST['s']);
+				$current_url = add_query_arg( 's', $_REQUEST['s'], $current_url );
+			}
 
 			$page_links[] = sprintf( "<a class='%s' title='%s' href='%s'>%s</a>",
 				'prev-page' . $disable_first,
@@ -692,7 +747,7 @@ if ( ! class_exists( 'WP_List_Table_Helper' ) ) {
 		private function filter_query( $query ) {
 
 			$add_query = '';
-			$filter_by = $_REQUEST['filter_by'];
+			$filter_by = sanitize_key($_REQUEST['filter_by']);
 			switch ( $filter_by ) {
 				case 'today'  :
 					$today = getdate();

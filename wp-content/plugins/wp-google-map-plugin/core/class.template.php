@@ -63,6 +63,9 @@ if ( ! class_exists( 'FlipperCode_HTML_Markup' ) ) {
 		 * @var Array
 		 */
 		protected $form_response = null;
+
+		private static $enable_accordian = false;
+
 		/**
 		 * Form Method - POST or GET
 		 *
@@ -139,7 +142,7 @@ if ( ! class_exists( 'FlipperCode_HTML_Markup' ) ) {
 		 */
 		public function __construct($options = array()) {
 
-			$this->allowed_attributes = array_fill_keys( array( 'min', 'max', 'choose_button', 'remove_button', 'lable', 'id', 'class', 'required', 'default_value', 'value', 'options', 'desc', 'before', 'after', 'radio-val-label', 'onclick', 'placeholder', 'textarea_rows', 'textarea_name', 'html', 'current', 'width', 'height', 'src', 'alt', 'heading', 'data', 'show', 'optgroup', 'selectable_optgroup', 'tabs', 'row_class', 'page','data_type','href','target','fpc','product','productTemplate','parentTemplate','instance','dboption','template_types','templatePath','templateURL','settingPage','customiser','attachment_id','parent_page_slug', 'data_type','fc_modal_header','fc_modal_content','fc_modal_footer','fc_modal_initiator', 'no-sticky','customiser','customiser_controls','data_placeholders' ) , '' );
+			$this->allowed_attributes = array_fill_keys( array( 'min', 'max', 'choose_button', 'remove_button', 'lable', 'id', 'class', 'required', 'default_value', 'value', 'options', 'desc', 'before', 'after', 'radio-val-label', 'onclick', 'placeholder', 'textarea_rows', 'textarea_name', 'html', 'current', 'width', 'height', 'src', 'alt', 'heading', 'data', 'show', 'optgroup', 'selectable_optgroup', 'tabs', 'row_class', 'page','data_type','href','target','fpc','product','productTemplate','parentTemplate','instance','dboption','template_types','templatePath','templateURL','settingPage','customiser','attachment_id','parent_page_slug', 'data_type','fc_modal_header','fc_modal_content','fc_modal_footer','fc_modal_initiator', 'no-sticky','customiser','customiser_controls','data_placeholders', 'parent_class', 'enable_slider' ) , '' );
 			
 			$this->allowed_attributes['style'] = array();
 			$this->allowed_attributes['required'] = false;
@@ -157,13 +160,15 @@ if ( ! class_exists( 'FlipperCode_HTML_Markup' ) ) {
 		 * @param string $manage_pagetitle Call to Action Title.
 		 * @param string $manage_pagename  Call to Action Page Slug.
 		 */
-		public function set_header( $form_title, $response, $manage_pagetitle = '', $manage_pagename = '' ) {
+		public function set_header( $form_title, $response, $enable_accordian = '', $manage_pagetitle = '', $manage_pagename = '' ) {
 			if ( isset( $form_title ) && ! empty( $form_title ) ) {
 				$this->form_title = $form_title; }
 			if ( isset( $response ) && ! empty( $response ) ) {
 				$this->form_response = $response; }
 			$this->manage_pagename = $manage_pagename;
 			$this->manage_pagetitle = $manage_pagetitle;
+
+			self::$enable_accordian = $enable_accordian;
 		}
 
 		/**
@@ -274,6 +279,9 @@ if ( ! class_exists( 'FlipperCode_HTML_Markup' ) ) {
 		public function show_header() {
 			$plugin_updates = unserialize( get_option('fc_'.$this->options['productSlug'] ) );
 
+			if( !isset($plugin_updates) || !isset($plugin_updates['annoucement']))
+			$plugin_updates['annoucement'] = '';
+			
 			$output = '<div class="flippercode-ui">
 						<div class="fc-main"><div class="fc-container"><div class="fc-divider"><div class="product_header">
 			 		<div class="fc-4 col-sm-3 col-xs-3 product_header_desc">
@@ -282,12 +290,15 @@ if ( ! class_exists( 'FlipperCode_HTML_Markup' ) ) {
                     <div class="fc-6 col-sm-6 col-xs-6 product-annoucement">'.$plugin_updates['annoucement'].'</div>
                     <div class="fc-2 col-sm-3 col-xs-3 social_media_area">
                     <div class="social-media-links">
-                           <a href="'.$this->options['demoURL'].'" target="_blank"><i class="fa fa-info-circle fc-label-info" aria-hidden="true"></i></a>
-                           <a href="'.$this->options['videoURL'].'" target="_blank"><i class="fa fa-video-camera fc-label-warning" aria-hidden="true"></i></a>
-                           <a href="'.$this->options['docURL'].'" target="_blank"><i class="fa fa-book fc-label-danger" aria-hidden="true"></i></a>
+                           <a href="' . $this->options['docURL'] . '" target="_blank"><img src="'. plugin_dir_url( __DIR__ ).'assets/images/vector.png"></a>
+
+                           <a href="' . $this->options['videoURL'] . '" target="_blank"><img src="'. plugin_dir_url( __DIR__ ).'assets/images/video-icon.png"></a>
+
+                           <a href="https://www.flippercode.com" target="_blank"><img src="'. plugin_dir_url( __DIR__ ).'assets/images/flippdercode_logo.png"></a>
                          </div>      
                     </div></div></div></div></div></div>'; 
-            return $output;        
+                    
+            return apply_filters('fc_after_plugin_header', $output );        
 		}
 		public function product_overview() {
 			
@@ -305,10 +316,13 @@ if ( ! class_exists( 'FlipperCode_HTML_Markup' ) ) {
 			}
 			
 			$output .= '<div class="flippercode-ui flippercode-ui-height">
-						<div class="fc-main"><div class="fc-container">';	
-			$output .=	'<div class="fc-divider   fc-item-shadow"><div class=" fc-back">
-										<div class="fc-12"><h4 class="fc-title-blue">' . $this->get_title() .'</h4></div>
-						<div class="wpgmp-overview">' .
+
+						<div class="fc-main"><div class="fc-container">';
+
+			$output .= '<div class="fc-divider   fc-item-shadow"><div class=" fc-back">
+
+						<div class="fc-form-container">' .
+
 						$this->get_form_messages();
 			return apply_filters( 'wpgmp_form_header_html', $output );
 		}
@@ -403,44 +417,190 @@ if ( ! class_exists( 'FlipperCode_HTML_Markup' ) ) {
 		public function get_combined_markup() {
 
 			$element_html = '';
+
 			if ( $this->elements ) {
+
 				$elements  = $this->elements;
-				$before = apply_filters( 'wpgmp_element_before_start_row', '<div class="fc-form-group {modifier}">' );
-				$after = apply_filters( 'wpgmp_element_after_end_row', '</div>' );
+
 				$num = 0;
+
+				$tmpl = false;
+
+				$section_start = '';
+
 				while ( $num < count( $elements ) ) {
+
 					$col = $this->get_col();
+
 					$elem_content = '';
-					//echo 'NO '.$num.' and col '.$col;
-					//echo '<pre>'; print_r($elements);	
+
+					
+
 					foreach ( array_slice( $elements, $num, $col ) as $name => $atts ) {
+
+						
+
+						if(self::$enable_accordian == true) {
+
+							
+
+							if($atts['type'] == 'group' ){
+
+
+
+								$before = apply_filters( 'wpgmp_element_before_start_row', '<dt><section class="fc-form-group {modifier} '.$atts['parent_class'].'">' );
+
+								$after = apply_filters( 'wpgmp_element_after_end_row', '</section></dt>' );
+
+								$group_section_start = '<dd>';
+
+
+
+							} else if($atts['type'] == 'templates') {
+
+								$group_section_start = '';
+
+								//Do Noting For Now
+
+								
+
+							} else if( $atts['type'] == 'hidden' ) {
+
+								$before = '';
+
+								$after = '';
+
+								$group_section_start = '';
+
+							} else if( $atts['type'] == 'submit' ) {
+
+
+
+								$before = apply_filters( 'wpgmp_element_before_start_row', '</dd><section class="fc-form-group {modifier} '.$atts['parent_class'].'">' );
+
+								$after = apply_filters( 'wpgmp_element_after_end_row', '</section>' );
+
+								$group_section_start = '';
+
+							} else {
+
+
+
+								$before = apply_filters( 'wpgmp_element_before_start_row', '<section class="fc-form-group {modifier} '.$atts['parent_class'].'">' );
+
+								$after = apply_filters( 'wpgmp_element_after_end_row', '</section>' );
+
+								$group_section_start = '';
+
+							}
+
+						} else{
+
+
+							if( $atts['type'] == 'hidden' ) {
+
+								$before = '';
+
+								$after = '';
+
+								$group_section_start = '';
+
+							}else{
+
+								$group_section_start = '';
+
+								$before = apply_filters( 'wpgmp_element_before_start_row', '<div class="fc-form-group {modifier} '.$atts['parent_class'].'">' );
+
+								$after = apply_filters( 'wpgmp_element_after_end_row', '</div>' );
+							}
+
+							
+
+						}
+
+						
+
 						$row_extra = false;
+
 						$temp = $before;
+
 						if ( ! isset( $atts['type'] ) || ! is_string( $name ) ) {
-							continue; }
+
+							continue; 
+
+						}
+
+
 
 						if ( 'hidden' == $atts['type'] ) {
 
+							$before = '';
+
+							$after = '';
 							$elem_content .= call_user_func( 'FlipperCode_HTML_Markup::field_' . $atts['type'], $name, $atts );
+
 							continue;
+
 						}
+
+
+
+						if ( 'templates' == $atts['type'] ) {
+
+							$before = '';
+
+							$after = '';
+
+							$elem_content .= call_user_func( 'FlipperCode_HTML_Markup::field_' . $atts['type'], $name, $atts );
+
+							continue;
+
+						}
+
+						
 
 						$elem_content .= $this->get_element_html( $name, $atts['type'], $atts );
 
+
+
 						if ( isset( $atts['col_after'] ) ) {
-							$this->columns = $atts['col_after']; }
-						if ( isset( $atts['show'] ) and  'false' == $atts['show'] ) {
-							$row_extra = true; }
+
+							$this->columns = $atts['col_after']; 
+
+						}
+
+						if ( isset( $atts['show'] ) and 'false' == $atts['show'] ) {
+
+							$row_extra = true; 
+
+						}
+
+
+
 					}
+
+
+
 					if ( true == $row_extra ) {
+
 						$temp = str_replace( '{modifier}', 'hiderow', $temp );
+
 					} else {
+
 						$temp = str_replace( '{modifier}', '', $temp );
+
 					}
+
 					if ( ! empty( $elem_content ) ) {
-						$element_html .= $temp . $elem_content . $after; }
+
+						$element_html .= $temp . $elem_content . $after . $group_section_start; }
+
 					$num = $num + $col;
-				}
+
+					
+
+				} 
+
 			}
 			return $element_html;
 
@@ -459,6 +619,13 @@ if ( ! class_exists( 'FlipperCode_HTML_Markup' ) ) {
 				$form_header .= ' id="' . $this->form_id . '" '; }
 			$form_header .= '>';
 			$form_header .= '<div class="' . $this->form_type . '">';
+
+			if(self::$enable_accordian == true) {
+
+				$form_header .= '<dl class="custom-accordion">';
+
+			}
+
 			return $form_header;
 
 		}
@@ -477,7 +644,15 @@ if ( ! class_exists( 'FlipperCode_HTML_Markup' ) ) {
 		 */
 		public function get_form_footer() {
 
-			$form_footer = '</div>';
+			if(self::$enable_accordian == true) {
+
+				$form_footer = '</dl></div>';
+
+			}else{
+
+				$form_footer = '</div>';
+
+			}
 			$form_footer .= wp_nonce_field( $this->nonce_key,'_wpnonce',true,false );
 			$form_footer .= '</form>';
 			return $form_footer;
@@ -543,10 +718,13 @@ if ( ! class_exists( 'FlipperCode_HTML_Markup' ) ) {
 			} else {
 
 				if ( ! empty( $atts['lable'] ) ) {
-					$element_output .= apply_filters( 'wpgmp_input_label_' . $name, '<div class="fc-3"><label for="' . $name . '">' . $atts['lable'] . '</label>' . self::element_mandatory( @$atts['required'] ) . '</div>' ); }
-				$element_output .= @$atts['before'] ? @$atts['before'] : '<div class="fc-8">';
+					$element_output .= apply_filters( 'wpgmp_input_label_' . $name, '<div class="fc-3"><label for="' . $name . '">' . $atts['lable'] . '&nbsp' . self::element_mandatory( isset($atts['required']) ? $atts['required'] : '' ) . '</div>' ) . '</label>'; }
+
+				$element_output .= (isset($atts['before']) && !empty($atts['before'])) ? $atts['before'] : '<div class="fc-8">';
+
 				$element_output .= call_user_func( 'FlipperCode_HTML_Markup::field_' . $type, $name, $atts );
-				$element_output .= @$atts['after'] ? @$atts['after'] : '</div>';
+
+				$element_output .= (isset($atts['after']) && !empty($atts['after'])) ? $atts['after'] : '</div>';
 				return $element_output;
 			}
 
@@ -560,7 +738,8 @@ if ( ! class_exists( 'FlipperCode_HTML_Markup' ) ) {
 		public static function element_mandatory( $required = false ) {
 
 			if ( true == $required ) {
-				return '<span style="color:#F00;">*</span>'; }
+				return '<span style="color:#F00;">*</span>'; 
+			}
 		}
 		/**
 		 * Attributes Generator for the element.

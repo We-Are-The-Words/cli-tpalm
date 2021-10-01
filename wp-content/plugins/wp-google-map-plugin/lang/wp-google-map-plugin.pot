@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wp google map plugin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-03 18:11+0530\n"
+"POT-Creation-Date: 2021-02-02 11:12+0530\n"
 "PO-Revision-Date: 2017-07-25 18:38+0530\n"
 "Last-Translator: Flipper Code <hello@flippercode.com>\n"
 "Language-Team: flippercode <hello@flippercode.com>\n"
@@ -14,7 +14,7 @@ msgstr ""
 "X-Poedit-KeywordsList: esc_html__;esc_html_e\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-SourceCharset: UTF-8\n"
-"X-Generator: Poedit 1.8.7.1\n"
+"X-Generator: Poedit 2.0.6\n"
 "X-Poedit-SearchPath-0: .\n"
 
 #: classes/class.map-widget.php:25
@@ -85,17 +85,69 @@ msgstr ""
 msgid "WP Google Map Plugin"
 msgstr ""
 
+#: classes/wpgmp-template.php:40
+msgid "World's most advanced google map plugin"
+msgstr ""
+
+#: core/class.tabular.php:617
+msgid "Filter By :"
+msgstr ""
+
+#: core/class.tabular.php:619
+msgid "Select Filter Criteria"
+msgstr ""
+
+#: core/class.tabular.php:620
+msgid "Today"
+msgstr ""
+
+#: core/class.tabular.php:621
+msgid "Yesterday"
+msgstr ""
+
+#: core/class.tabular.php:622
+msgid "This Week"
+msgstr ""
+
+#: core/class.tabular.php:623
+msgid "This Month"
+msgstr ""
+
+#: core/class.tabular.php:624
+msgid "Last 3 Months"
+msgstr ""
+
+#: core/class.tabular.php:625
+msgid "Last 6 Months"
+msgstr ""
+
+#: core/class.tabular.php:626
+msgid "Last Year"
+msgstr ""
+
+#: core/class.tabular.php:627
+msgid "Custom"
+msgstr ""
+
+#: modules/extentions/model.extentions.php:29
+msgid "Extentions"
+msgstr ""
+
+#: modules/extentions/views/manage.php:10
+msgid "Premium Add-Ons / Extentions For WP Google Maps Pro"
+msgstr ""
+
 #: modules/group_map/model.group_map.php:40 modules/overview/views/how.php:68
 msgid "Add Marker Category"
 msgstr ""
 
 #: modules/group_map/model.group_map.php:41
-#: modules/location/views/form.php:200
+#: modules/group_map/views/manage.php:72 modules/location/views/form.php:197
 msgid "Marker Categories"
 msgstr ""
 
 #: modules/group_map/model.group_map.php:126
-#: modules/location/model.location.php:175 modules/map/model.map.php:229
+#: modules/location/model.location.php:183 modules/map/model.map.php:230
 msgid "Something went wrong. Please try again."
 msgstr ""
 
@@ -107,272 +159,288 @@ msgstr ""
 msgid "Marker category added successfully."
 msgstr ""
 
-#: modules/group_map/views/form.php:30
+#: modules/group_map/views/form.php:27 modules/group_map/views/manage.php:71
 msgid "Marker Category"
 msgstr ""
 
-#: modules/group_map/views/form.php:30
+#: modules/group_map/views/form.php:27
 msgid "Manage Marker Categories"
 msgstr ""
 
-#: modules/group_map/views/form.php:39 modules/group_map/views/manage.php:54
+#: modules/group_map/views/form.php:36 modules/group_map/views/manage.php:63
 msgid "Parent Category"
 msgstr ""
 
-#: modules/group_map/views/form.php:41
+#: modules/group_map/views/form.php:38
 msgid "Assign parent category if any."
 msgstr ""
 
-#: modules/group_map/views/form.php:48 modules/group_map/views/form.php:53
+#: modules/group_map/views/form.php:45 modules/group_map/views/form.php:50
 msgid "Marker Category Title"
 msgstr ""
 
-#: modules/group_map/views/form.php:51
+#: modules/group_map/views/form.php:48
 msgid "Enter here marker category title."
 msgstr ""
 
-#: modules/group_map/views/form.php:59
+#: modules/group_map/views/form.php:56
 #: modules/map/views/map-forms/layers-form.php:44
 msgid "Choose Marker Image"
 msgstr ""
 
-#: modules/group_map/views/form.php:62
+#: modules/group_map/views/form.php:59
 #: modules/map/views/map-forms/layers-form.php:47
 #: modules/map/views/map-forms/locations-form.php:48
 msgid "Choose"
 msgstr ""
 
-#: modules/group_map/views/form.php:63
+#: modules/group_map/views/form.php:60
 #: modules/map/views/map-forms/layers-form.php:48
 msgid "Remove"
 msgstr ""
 
-#: modules/group_map/views/manage.php:52
+#: modules/group_map/views/manage.php:61
 msgid "Category Title"
 msgstr ""
 
-#: modules/group_map/views/manage.php:53
+#: modules/group_map/views/manage.php:62
 msgid "Marker Image"
 msgstr ""
 
-#: modules/group_map/views/manage.php:55
+#: modules/group_map/views/manage.php:64
 msgid "Updated On"
 msgstr ""
 
-#: modules/group_map/views/manage.php:71 modules/map/views/manage.php:63
+#: modules/group_map/views/manage.php:81 modules/map/views/manage.php:74
 msgid "Delete"
 msgstr ""
 
-#: modules/group_map/views/manage.php:73
+#: modules/group_map/views/manage.php:83
 msgid "Manage Categories"
 msgstr ""
 
-#: modules/group_map/views/manage.php:74
+#: modules/group_map/views/manage.php:84
 msgid "Add Category"
 msgstr ""
 
-#: modules/group_map/views/manage.php:75
+#: modules/group_map/views/manage.php:85
 msgid "Category deleted successfully"
 msgstr ""
 
-#: modules/group_map/views/manage.php:76
+#: modules/group_map/views/manage.php:86
 msgid "Category added successfully"
 msgstr ""
 
-#: modules/group_map/views/manage.php:77
+#: modules/group_map/views/manage.php:87
 msgid "Category updated successfully"
 msgstr ""
 
-#: modules/location/model.location.php:41 modules/location/views/manage.php:30
+#: modules/location/model.location.php:41 modules/location/views/manage.php:40
 #: modules/overview/views/how.php:36
 msgid "Add Location"
 msgstr ""
 
-#: modules/location/model.location.php:42 modules/location/views/form.php:37
-#: modules/location/views/manage.php:29
+#: modules/location/model.location.php:42 modules/location/views/form.php:34
+#: modules/location/views/manage.php:39
 msgid "Manage Locations"
 msgstr ""
 
-#: modules/location/model.location.php:177
+#: modules/location/model.location.php:128
+msgid "Please enter a valid float value for latitude."
+msgstr ""
+
+#: modules/location/model.location.php:131
+msgid "Please enter a valid float value for longitude."
+msgstr ""
+
+#: modules/location/model.location.php:185
 msgid "Location updated successfully."
 msgstr ""
 
-#: modules/location/model.location.php:179
+#: modules/location/model.location.php:187
 msgid "Location added successfully."
 msgstr ""
 
-#: modules/location/views/form.php:37
+#: modules/location/views/form.php:34
 msgid "Location Information"
 msgstr ""
 
-#: modules/location/views/form.php:42 modules/map/views/form.php:51
+#: modules/location/views/form.php:39 modules/map/views/form.php:49
 #: modules/settings/views/manage.php:12
 msgid "create google maps api key"
 msgstr ""
 
-#: modules/location/views/form.php:43 modules/map/views/form.php:52
+#: modules/location/views/form.php:40 modules/map/views/form.php:50
 msgid "here"
 msgstr ""
 
-#: modules/location/views/form.php:46 modules/map/views/form.php:55
+#: modules/location/views/form.php:43 modules/map/views/form.php:53
 #, php-format
 msgid ""
 "Google Maps API Key is missing. Follow instructions to %1$s and then insert "
 "your key %2$s."
 msgstr ""
 
-#: modules/location/views/form.php:56
+#: modules/location/views/form.php:53
 msgid "Location Title"
 msgstr ""
 
-#: modules/location/views/form.php:59
+#: modules/location/views/form.php:56
 msgid "Enter Location Title"
 msgstr ""
 
-#: modules/location/views/form.php:63
+#: modules/location/views/form.php:60
 msgid "Location Address"
 msgstr ""
 
-#: modules/location/views/form.php:65
+#: modules/location/views/form.php:62
 msgid "Enter here the address. Google auto suggest helps you to choose one."
 msgstr ""
 
-#: modules/location/views/form.php:68
+#: modules/location/views/form.php:65
 msgid "Type Location Address"
 msgstr ""
 
-#: modules/location/views/form.php:72
+#: modules/location/views/form.php:69
 msgid "Latitude and Longitude"
 msgstr ""
 
-#: modules/location/views/form.php:77
+#: modules/location/views/form.php:74
 msgid "Latitude"
 msgstr ""
 
-#: modules/location/views/form.php:86
+#: modules/location/views/form.php:83
 msgid "Longitude"
 msgstr ""
 
-#: modules/location/views/form.php:91
+#: modules/location/views/form.php:88
 msgid "City and State"
 msgstr ""
 
-#: modules/location/views/form.php:95
+#: modules/location/views/form.php:92
 msgid "City"
 msgstr ""
 
-#: modules/location/views/form.php:103
+#: modules/location/views/form.php:100
 msgid "State"
 msgstr ""
 
-#: modules/location/views/form.php:108
+#: modules/location/views/form.php:105
 msgid "Country and Postal Code"
 msgstr ""
 
-#: modules/location/views/form.php:112
+#: modules/location/views/form.php:109
 msgid "Country"
 msgstr ""
 
-#: modules/location/views/form.php:120
+#: modules/location/views/form.php:117
 msgid "Postal Code"
 msgstr ""
 
-#: modules/location/views/form.php:126
+#: modules/location/views/form.php:123
 msgid "Current Location"
 msgstr ""
 
-#: modules/location/views/form.php:133
+#: modules/location/views/form.php:130
 msgid "On Click"
 msgstr ""
 
-#: modules/location/views/form.php:134
+#: modules/location/views/form.php:131
 msgid "Display Infowindow"
 msgstr ""
 
-#: modules/location/views/form.php:134
+#: modules/location/views/form.php:131
 msgid "Redirect"
 msgstr ""
 
-#: modules/location/views/form.php:143
+#: modules/location/views/form.php:140
 #: modules/map/views/map-forms/layers-form.php:22
 msgid "Infowindow Message"
 msgstr ""
 
-#: modules/location/views/form.php:145
+#: modules/location/views/form.php:142
 msgid "Enter here the infoWindow message."
 msgstr ""
 
-#: modules/location/views/form.php:154
+#: modules/location/views/form.php:151
 msgid "Redirect Url"
 msgstr ""
 
-#: modules/location/views/form.php:156
+#: modules/location/views/form.php:153
 msgid "Enter here the redirect url. e.g http://www.flippercode.com"
 msgstr ""
 
-#: modules/location/views/form.php:164
+#: modules/location/views/form.php:161
 msgid "YES"
 msgstr ""
 
-#: modules/location/views/form.php:164
+#: modules/location/views/form.php:161
 msgid "NO"
 msgstr ""
 
-#: modules/location/views/form.php:165
+#: modules/location/views/form.php:162
 msgid "Open new tab"
 msgstr ""
 
-#: modules/location/views/form.php:167
+#: modules/location/views/form.php:164
 msgid "Open a new window tab."
 msgstr ""
 
-#: modules/location/views/form.php:176
+#: modules/location/views/form.php:173
 msgid "Infowindow Default Open"
 msgstr ""
 
-#: modules/location/views/form.php:180
+#: modules/location/views/form.php:177
 msgid "Check to enable infowindow default open."
 msgstr ""
 
-#: modules/location/views/form.php:184
+#: modules/location/views/form.php:181
 msgid "Marker Draggable"
 msgstr ""
 
-#: modules/location/views/form.php:188
+#: modules/location/views/form.php:185
 msgid "Check if you want to allow visitors to drag the marker."
 msgstr ""
 
-#: modules/location/views/form.php:192
+#: modules/location/views/form.php:189
 msgid "Marker Animation"
 msgstr ""
 
-#: modules/location/views/form.php:243
+#: modules/location/views/form.php:191
+msgid "Bounce"
+msgstr ""
+
+#: modules/location/views/form.php:191
+msgid "DROP"
+msgstr ""
+
+#: modules/location/views/form.php:240
 msgid "You don't have categorie(s)."
 msgstr ""
 
-#: modules/location/views/form.php:257
+#: modules/location/views/form.php:254
 msgid "Save Location"
 msgstr ""
 
-#: modules/location/views/manage.php:31
+#: modules/location/views/manage.php:41
 msgid "Location(s) deleted successfully"
 msgstr ""
 
-#: modules/location/views/manage.php:32
+#: modules/location/views/manage.php:42
 msgid "Location added successfully"
 msgstr ""
 
-#: modules/location/views/manage.php:33
+#: modules/location/views/manage.php:43
 msgid "Location updated successfully"
 msgstr ""
 
-#: modules/map/model.map.php:39 modules/map/views/manage.php:68
+#: modules/map/model.map.php:39 modules/map/views/manage.php:79
 #: modules/overview/views/how.php:43
 msgid "Add Map"
 msgstr ""
 
-#: modules/map/model.map.php:40 modules/map/views/form.php:46
-#: modules/map/views/manage.php:67
+#: modules/map/model.map.php:40 modules/map/views/form.php:44
+#: modules/map/views/manage.php:78
 msgid "Manage Maps"
 msgstr ""
 
@@ -388,95 +456,144 @@ msgstr ""
 msgid "Please enter integer values for both POV heading & Pov pitch."
 msgstr ""
 
-#: modules/map/model.map.php:231
+#: modules/map/model.map.php:232
 msgid "Map updated successfully."
 msgstr ""
 
-#: modules/map/model.map.php:233
+#: modules/map/model.map.php:234
 msgid "Map added successfully."
 msgstr ""
 
-#: modules/map/model.map.php:261
+#: modules/map/model.map.php:262
 msgid "Copy"
 msgstr ""
 
-#: modules/map/views/form.php:46
+#: modules/map/views/form.php:44
 msgid "Map Information"
 msgstr ""
 
-#: modules/map/views/form.php:78
+#: modules/map/views/form.php:76
 msgid "Save Map"
 msgstr ""
 
-#: modules/map/views/manage.php:69
+#: modules/map/views/manage.php:80
 msgid "Maps deleted successfully"
 msgstr ""
 
-#: modules/map/views/manage.php:70
+#: modules/map/views/manage.php:81
 msgid "Map added successfully"
 msgstr ""
 
-#: modules/map/views/manage.php:71
+#: modules/map/views/manage.php:82
 msgid "Map updated successfully"
 msgstr ""
 
-#: modules/map/views/map-forms/control-position-style-form.php:24
+#: modules/map/views/map-forms/control-position-style-form.php:9
+msgid "Top Left"
+msgstr ""
+
+#: modules/map/views/map-forms/control-position-style-form.php:10
+msgid "Top Right"
+msgstr ""
+
+#: modules/map/views/map-forms/control-position-style-form.php:11
+msgid "Left Top"
+msgstr ""
+
+#: modules/map/views/map-forms/control-position-style-form.php:12
+msgid "Right Top"
+msgstr ""
+
+#: modules/map/views/map-forms/control-position-style-form.php:13
+msgid "Top Center"
+msgstr ""
+
+#: modules/map/views/map-forms/control-position-style-form.php:14
+msgid "Left Center"
+msgstr ""
+
+#: modules/map/views/map-forms/control-position-style-form.php:15
+msgid "Right Center"
+msgstr ""
+
+#: modules/map/views/map-forms/control-position-style-form.php:16
+#: modules/map/views/map-forms/control-position-style-form.php:21
+msgid "Bottom Right"
+msgstr ""
+
+#: modules/map/views/map-forms/control-position-style-form.php:17
+msgid "Left Bottom"
+msgstr ""
+
+#: modules/map/views/map-forms/control-position-style-form.php:18
+msgid "Right Bottom"
+msgstr ""
+
+#: modules/map/views/map-forms/control-position-style-form.php:19
+msgid "Bottom Center"
+msgstr ""
+
+#: modules/map/views/map-forms/control-position-style-form.php:20
+msgid "Bottom Left"
+msgstr ""
+
+#: modules/map/views/map-forms/control-position-style-form.php:25
 msgid "Control Position(s) Settings"
 msgstr ""
 
-#: modules/map/views/map-forms/control-position-style-form.php:30
+#: modules/map/views/map-forms/control-position-style-form.php:31
 msgid "Zoom Control"
 msgstr ""
 
-#: modules/map/views/map-forms/control-position-style-form.php:32
+#: modules/map/views/map-forms/control-position-style-form.php:33
 msgid "Please select position of zoom control."
 msgstr ""
 
-#: modules/map/views/map-forms/control-position-style-form.php:37
+#: modules/map/views/map-forms/control-position-style-form.php:38
 msgid "Zoom Control Style"
 msgstr ""
 
-#: modules/map/views/map-forms/control-position-style-form.php:39
+#: modules/map/views/map-forms/control-position-style-form.php:40
 msgid "Please select style of zoom control."
 msgstr ""
 
-#: modules/map/views/map-forms/control-position-style-form.php:44
+#: modules/map/views/map-forms/control-position-style-form.php:45
 msgid "Map Type Control"
 msgstr ""
 
-#: modules/map/views/map-forms/control-position-style-form.php:47
+#: modules/map/views/map-forms/control-position-style-form.php:48
 msgid "Please select position of map type control."
 msgstr ""
 
-#: modules/map/views/map-forms/control-position-style-form.php:54
+#: modules/map/views/map-forms/control-position-style-form.php:55
 msgid "Map Type Control Style"
 msgstr ""
 
-#: modules/map/views/map-forms/control-position-style-form.php:56
+#: modules/map/views/map-forms/control-position-style-form.php:57
 msgid "Please select style of map type control."
 msgstr ""
 
-#: modules/map/views/map-forms/control-position-style-form.php:62
+#: modules/map/views/map-forms/control-position-style-form.php:63
 msgid "Full Screen Control"
 msgstr ""
 
-#: modules/map/views/map-forms/control-position-style-form.php:65
+#: modules/map/views/map-forms/control-position-style-form.php:66
 msgid "Please select position of full screen control."
 msgstr ""
 
-#: modules/map/views/map-forms/control-position-style-form.php:70
+#: modules/map/views/map-forms/control-position-style-form.php:71
 msgid "Street View Control"
 msgstr ""
 
-#: modules/map/views/map-forms/control-position-style-form.php:72
+#: modules/map/views/map-forms/control-position-style-form.php:73
 msgid "Please select position of street view control."
 msgstr ""
 
-#: modules/map/views/map-forms/control-position-style-form.php:78
+#: modules/map/views/map-forms/control-position-style-form.php:79
 msgid "Search Control"
 msgstr ""
 
-#: modules/map/views/map-forms/control-position-style-form.php:81
+#: modules/map/views/map-forms/control-position-style-form.php:82
 msgid "Please select position of search box control."
 msgstr ""
 
@@ -619,6 +736,16 @@ msgid ""
 "{marker_latitude},{marker_longitude}."
 msgstr ""
 
+#: modules/map/views/map-forms/layers-form.php:35
+#: modules/map/views/map-forms/layers-form.php:70
+msgid "Mouse Click"
+msgstr ""
+
+#: modules/map/views/map-forms/layers-form.php:35
+#: modules/map/views/map-forms/layers-form.php:70
+msgid "Mouse Hover"
+msgstr ""
+
 #: modules/map/views/map-forms/layers-form.php:37
 msgid "Show Infowindow on"
 msgstr ""
@@ -645,14 +772,6 @@ msgstr ""
 
 #: modules/map/views/map-forms/layers-form.php:70
 msgid "Select Animation"
-msgstr ""
-
-#: modules/map/views/map-forms/layers-form.php:70
-msgid "Mouse Click"
-msgstr ""
-
-#: modules/map/views/map-forms/layers-form.php:70
-msgid "Mouse Hover"
 msgstr ""
 
 #: modules/map/views/map-forms/layers-form.php:72
@@ -823,6 +942,10 @@ msgstr ""
 
 #: modules/overview/model.overview.php:27
 msgid "How to Use"
+msgstr ""
+
+#: modules/overview/views/how.php:21
+msgid "How to Create your First Map?"
 msgstr ""
 
 #: modules/overview/views/how.php:26
@@ -1181,58 +1304,58 @@ msgstr ""
 msgid "Save Setting"
 msgstr ""
 
-#: modules/shortcode/views/put-wpgmp.php:346
+#: modules/shortcode/views/put-wpgmp.php:347
 msgid "Filter Locations"
 msgstr ""
 
-#: modules/shortcode/views/put-wpgmp.php:377
+#: modules/shortcode/views/put-wpgmp.php:378
 msgid "Type here..."
 msgstr ""
 
-#: wp-google-map-plugin.php:126
+#: wp-google-map-plugin.php:121
 msgid "All"
 msgstr ""
 
-#: wp-google-map-plugin.php:127
+#: wp-google-map-plugin.php:122
 msgid "Show Locations"
 msgstr ""
 
-#: wp-google-map-plugin.php:128
+#: wp-google-map-plugin.php:123
 msgid "Sort by"
 msgstr ""
 
-#: wp-google-map-plugin.php:129
+#: wp-google-map-plugin.php:124
 msgid "Not working..."
 msgstr ""
 
-#: wp-google-map-plugin.php:232 wp-google-map-plugin.php:233
-msgid "Google Maps"
+#: wp-google-map-plugin.php:226 wp-google-map-plugin.php:227
+msgid "WP Google Maps"
 msgstr ""
 
-#: wp-google-map-plugin.php:362
+#: wp-google-map-plugin.php:353
 msgid "Hide"
 msgstr ""
 
-#: wp-google-map-plugin.php:368
+#: wp-google-map-plugin.php:359
 msgid "Are you sure to delete item?"
 msgstr ""
 
-#: wp-google-map-plugin.php:476
+#: wp-google-map-plugin.php:474
 msgid "Choose Icons"
 msgstr ""
 
-#: wp-google-map-plugin.php:540
-msgid "Choose marker icon"
-msgstr ""
-
-#: wp-google-map-plugin.php:546
+#: wp-google-map-plugin.php:499
 msgid "Choose icon"
 msgstr ""
 
-#: wp-google-map-plugin.php:546
+#: wp-google-map-plugin.php:500
 msgid "Search icons"
 msgstr ""
 
-#: wp-google-map-plugin.php:575
+#: wp-google-map-plugin.php:528
+msgid "Please choose marker icon for the category."
+msgstr ""
+
+#: wp-google-map-plugin.php:528
 msgid "Insert into Post"
 msgstr ""

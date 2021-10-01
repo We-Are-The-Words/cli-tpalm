@@ -2,7 +2,7 @@
 /**
  * Class: WPGMP_Model_Map
  * @author Flipper Code <hello@flippercode.com>
- * @version 3.0.0
+ * @version 4.1.6
  * @package Maps
  */
 
@@ -36,8 +36,8 @@ if ( ! class_exists( 'WPGMP_Model_Map' ) ) {
 		 */
 		function navigation() {
 			return array(
-			'wpgmp_form_map' => esc_html__( 'Add Map', 'wpgmp_google_map' ),
-			'wpgmp_manage_map' => esc_html__( 'Manage Maps', 'wpgmp_google_map' ),
+			'wpgmp_form_map' => esc_html__( 'Add Map', 'wp-google-map-plugin' ),
+			'wpgmp_manage_map' => esc_html__( 'Manage Maps', 'wp-google-map-plugin' ),
 			);
 
 		}
@@ -110,18 +110,18 @@ if ( ! class_exists( 'WPGMP_Model_Map' ) ) {
 			$this->verify( $_POST );
 			
 			if(!empty($_POST['map_street_view_setting']['pov_heading']) && empty($_POST['map_street_view_setting']['pov_pitch'])){
-				$this->errors[] = esc_html__( 'Please enter integer value for POV pitch.','wpgmp_google_map' );
+				$this->errors[] = esc_html__( 'Please enter integer value for POV pitch.','wp-google-map-plugin' );
 			}
 			if(empty($_POST['map_street_view_setting']['pov_heading']) && !empty($_POST['map_street_view_setting']['pov_pitch'])){
-				$this->errors[] = esc_html__( 'Please enter integer value for POV heading.','wpgmp_google_map' );
+				$this->errors[] = esc_html__( 'Please enter integer value for POV heading.','wp-google-map-plugin' );
 			}
 			if(!empty($_POST['map_street_view_setting']['pov_heading']) && !empty($_POST['map_street_view_setting']['pov_pitch'])){
 				
-				$a = $_POST['map_street_view_setting']['pov_heading'];
-				$b = $_POST['map_street_view_setting']['pov_pitch'];
+				$a = sanitize_text_field( $_POST['map_street_view_setting']['pov_heading'] );
+				$b = sanitize_text_field( $_POST['map_street_view_setting']['pov_pitch'] );
 				
 				if (!(int) $a == $a || !(int) $b == $b) {
-					$this->errors[] = esc_html__( 'Please enter integer values for both POV heading & Pov pitch.','wpgmp_google_map' );
+					$this->errors[] = esc_html__( 'Please enter integer values for both POV heading & Pov pitch.','wp-google-map-plugin' );
 				}
 				
 			}
@@ -163,7 +163,8 @@ if ( ! class_exists( 'WPGMP_Model_Map' ) ) {
 						unset($_POST['map_all_control']['custom_filters'][$k]);
 				}
 			}
-
+			
+			//Preparing secure and safe data to save
 			$data['map_title'] = sanitize_text_field( wp_unslash( $_POST['map_title'] ) );
 			if(isset($_POST['map_width']))
 			$data['map_width'] = str_replace( 'px','',sanitize_text_field( wp_unslash( $_POST['map_width'] ) ) );
@@ -226,11 +227,11 @@ if ( ! class_exists( 'WPGMP_Model_Map' ) ) {
 			$result = FlipperCode_Database::insert_or_update( $this->table, $data, $where );
 			
 			if ( false === $result ) {
-				$response['error'] = esc_html__( 'Something went wrong. Please try again.','wpgmp_google_map' );
+				$response['error'] = esc_html__( 'Something went wrong. Please try again.','wp-google-map-plugin' );
 			} elseif ( $entityID > 0 ) {
-				$response['success'] = esc_html__( 'Map updated successfully.','wpgmp_google_map' );
+				$response['success'] = esc_html__( 'Map updated successfully.','wp-google-map-plugin' );
 			} else {
-			    $response['success'] = esc_html__( 'Map added successfully.','wpgmp_google_map' );
+			    $response['success'] = esc_html__( 'Map added successfully.','wp-google-map-plugin' );
 			}
 			return $response;
 			
@@ -258,7 +259,7 @@ if ( ! class_exists( 'WPGMP_Model_Map' ) ) {
 
 					if ( $column == 'map_id' ) {
 						continue; } else if ( $column == 'map_title' ) {
-						$data[$column] = $value.' '.esc_html__( 'Copy','wpgmp_google_map' );
+						$data[$column] = $value.' '.esc_html__( 'Copy','wp-google-map-plugin' );
 						} else { 					$data[$column] = $value; }
 				}
 

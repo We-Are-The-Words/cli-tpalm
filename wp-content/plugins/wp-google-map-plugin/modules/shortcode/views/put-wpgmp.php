@@ -4,6 +4,7 @@
 * @package Maps
 * @author Flipper Code <hello@flippercode.com>
 */
+do_action('wpgmp_before_map');
 
 if ( isset( $options['id'] ) ) {
 $map_id = $options['id'];
@@ -343,7 +344,7 @@ if ( ! empty( $map->map_all_control['display_listing'] ) && $map->map_all_contro
 		$map->map_all_control['wpgmp_display_category_filter'] = false;
 	}
 	$map_data['listing'] = array(
-		'listing_header' => (! empty($map->map_all_control['wpgmp_before_listing']) ? $map->map_all_control['wpgmp_before_listing'] : esc_html__( 'Filter Locations', 'wpgmp-google-map' )),
+		'listing_header' => (! empty($map->map_all_control['wpgmp_before_listing']) ? $map->map_all_control['wpgmp_before_listing'] : esc_html__( 'Filter Locations', 'wp-google-map-plugin' )),
 		'display_category_filter'          => ( $map->map_all_control['wpgmp_display_category_filter'] == 'true' ),
 		'filters'                          => array( 'place_category' ),
 	);
@@ -374,7 +375,7 @@ $map_output = '<div class="wpgmp_map_container '.apply_filters('wpgmp_container_
 
 /* Search Control over map */
 if ( $map->map_all_control['search_control'] == 'true' ) {
-	$map_output .= '<input data-input="map-search-control" placeholder="' . esc_html__( 'Type here...', 'wpgmp-google-map' ) . '" type="text">';
+	$map_output .= '<input data-input="map-search-control" placeholder="' . esc_html__( apply_filters('wpgmp_search_bar_placeholder', 'Type here...', $map ), 'wp-google-map-plugin' ) . '" type="text">';
 }
 
 
