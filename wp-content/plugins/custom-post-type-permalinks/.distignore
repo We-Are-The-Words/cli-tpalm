@@ -21,6 +21,7 @@ phpunit.xml.dist
 multisite.xml
 multisite.xml.dist
 phpcs.ruleset.xml
+codesniffer.ruleset.xml
 README.md
 wp-cli.local.yml
 tests
@@ -31,3 +32,4 @@ node_modules
 *.zip
 .release-it.json
 .env
+.wp-env.json

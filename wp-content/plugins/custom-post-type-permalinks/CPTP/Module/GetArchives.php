@@ -19,7 +19,7 @@ class CPTP_Module_GetArchives extends CPTP_Module {
 	public function add_hook() {
 		if ( get_option( 'permalink_structure', '' ) !== '' ) {
 			add_filter( 'getarchives_join', array( $this, 'getarchives_join' ), 10, 2 );
-			add_filter( 'getarchives_where', array( $this, 'getarchives_where' ), 10 , 2 );
+			add_filter( 'getarchives_where', array( $this, 'getarchives_where' ), 10, 2 );
 			add_filter( 'get_archives_link', array( $this, 'get_archives_link' ), 20, 1 );
 		}
 	}
@@ -43,6 +43,19 @@ class CPTP_Module_GetArchives extends CPTP_Module {
 	public function getarchives_where( $where, $r ) {
 		$this->get_archives_where_r = $r;
 		if ( isset( $r['post_type'] ) ) {
+			if ( ! in_array( $r['post_type'], CPTP_Util::get_post_types(), true ) ) {
+				return $where;
+			}
+
+			$post_type = get_post_type_object( $r['post_type'] );
+			if ( ! $post_type ) {
+				return $where;
+			}
+
+			if ( ! $post_type->has_archive ) {
+				return $where;
+			}
+
 			$where = str_replace( '\'post\'', '\'' . $r['post_type'] . '\'', $where );
 		}
 
@@ -93,7 +106,20 @@ class CPTP_Module_GetArchives extends CPTP_Module {
 			return $html;
 		}
 
+		if ( ! in_array( $this->get_archives_where_r['post_type'], CPTP_Util::get_post_types(), true ) ) {
+			return $html;
+		}
+
 		if ( 'post' === $this->get_archives_where_r['post_type'] ) {
+			return $html;
+		}
+
+		$post_type = get_post_type_object( $this->get_archives_where_r['post_type'] );
+		if ( ! $post_type ) {
+			return $html;
+		}
+
+		if ( ! $post_type->has_archive ) {
 			return $html;
 		}
 
@@ -103,16 +129,15 @@ class CPTP_Module_GetArchives extends CPTP_Module {
 		$this->get_archives_where_r['post_type'] = isset( $this->get_archives_where_r['post_type_slug'] ) ? $this->get_archives_where_r['post_type_slug'] : $t; // [steve] [*** bug fixing]
 
 		if ( isset( $this->get_archives_where_r['post_type'] ) && 'postbypost' !== $this->get_archives_where_r['type'] ) {
-			$blog_url = rtrim( home_url() ,'/' );
+			$blog_url = rtrim( home_url(), '/' );
 
 			// remove front.
 			$front = substr( $wp_rewrite->front, 1 );
-			$html = str_replace( $front, '', $html );
+			$html  = str_replace( $front, '', $html );
 
 			$blog_url = preg_replace( '/https?:\/\//', '', $blog_url );
 			$ret_link = str_replace( $blog_url, $blog_url . '/%link_dir%', $html );
 
-			$post_type = get_post_type_object( $this->get_archives_where_r['post_type'] );
 			if ( empty( $c ) ) {
 				if ( isset( $post_type->rewrite['slug'] ) ) {
 					$link_dir = $post_type->rewrite['slug'];
@@ -121,8 +146,10 @@ class CPTP_Module_GetArchives extends CPTP_Module {
 				}
 			} else {
 				$c['name'] = ( 'category' === $c['name'] && get_option( 'category_base' ) ) ? get_option( 'category_base' ) : $c['name'];
-				$link_dir = $post_type->rewrite['slug'] . '/' . $c['name'] . '/' . $c['termslug'];
+				$link_dir  = $post_type->rewrite['slug'] . '/' . $c['name'] . '/' . $c['termslug'];
 			}
+
+			$ret_link = str_replace( '%link_dir%/date/', '%link_dir%/', $ret_link );
 
 			if ( ! strstr( $html, '/date/' ) ) {
 				$link_dir = $link_dir . CPTP_Util::get_date_front( $post_type );
@@ -133,6 +160,7 @@ class CPTP_Module_GetArchives extends CPTP_Module {
 			}
 
 			$ret_link = str_replace( '%link_dir%', $link_dir, $ret_link );
+			$ret_link = str_replace( '?post_type=' . $this->get_archives_where_r['post_type'], '', $ret_link );
 		} else {
 			$ret_link = $html;
 		}
