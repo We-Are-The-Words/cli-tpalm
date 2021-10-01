@@ -1,0 +1,424 @@
+label {
+    cursor: pointer;
+}
+
+textarea {
+    resize: vertical;
+}
+
+button[type=submit] {
+    @extend .btn;
+}
+
+input[type=text], input[type=email], input[type=password], input[type=date], textarea, .form-control {
+    -webkit-appearance: none;
+	border-radius: 0;
+	box-shadow: none;
+	border: 0;
+	color: $color-black;
+	font-size: 14px;
+	font-weight: 300;
+    height: 40px;
+
+	&:active, &:focus {
+		box-shadow: none;
+	}
+
+    #main & {
+        border: 2px solid rgba(0, 0, 0, .1);
+    }
+}
+
+textarea {
+    height: auto !important;
+}
+
+input[type=submit] {
+    @extend .btn;
+    @extend .btn-primary;
+    @extend .btn-inversed;
+}
+
+.input-group-addon {
+    background-color: #fff;
+    border-radius: 0;
+    border: 2px solid rgba(0, 0, 0, .1);
+    color: $color-black;
+    font-weight: bold;
+}
+
+.form-control-static {
+    background-color: rgba(0, 0, 0, .1);
+    padding: 6px 0;
+}
+
+.select-wrapper {
+    background-color: #fff;
+    cursor: pointer;
+    position: relative;
+
+    &:after {
+        content: '\f078';
+        font-family: 'FontAwesome';
+        position: absolute;
+        right: 12px;
+        top: 13px;
+        pointer-events: none;
+        -webkit-font-smoothing: antialiased;
+    }
+
+    select::-ms-expand {
+        display: none;
+    }
+
+    select {
+        background-color: #fff;
+        background-image: none;
+        border-radius: 0 !important;
+        border: 2px solid rgba(0, 0, 0, .1)  !important;
+        box-shadow: none;
+        cursor: pointer;
+        font-size: 14px !important;
+        line-height: 1.42857 !important;
+        margin-top: 0 !important;
+        padding: 8px 12px 9px 12px !important;
+        text-indent: 0.01px !important;
+        text-overflow: '';
+        width: 100%;
+        -moz-appearance: none;
+        -webkit-appearance: none;
+    }
+
+    select[disabled] {
+        background-color: transparent !important;
+        cursor: not-allowed;
+        opacity: .6;
+    }
+}
+
+// Radios & Checkboxes
+input[type="checkbox"], input[type="radio"]  {
+    display: none;
+
+    & + label {
+        font-size: 11px;
+        font-weight: 600;
+        padding-left: 30px;
+        position: relative;
+
+        &:before {
+            background-color: #fff;
+            border: 1px solid lighten($color-gray, 5%);
+            color: $color-primary;
+            display: inline-block;
+            font-family: fontawesome;
+            font-size: 0;
+            font-weight: 400;
+            height: 15px;
+            left: 0;
+            margin-top: 3px;
+            position: absolute;
+            padding-left: 7px;
+            width: 15px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        &:hover:before {
+            border-color: $color-primary;
+        }
+    }
+}
+
+input[type="checkbox"] {
+
+    & + label:before {
+        content: "\f00c";
+        border-radius: 2px;
+        line-height: 15px;
+        transition: all ease-in-out .15s;
+        transform: rotate(90deg);
+    }
+
+    &:checked + label:before {
+        border: 1px solid $color-primary;
+        line-height: 13px;
+        font-size: 12px;
+        padding-left: 1px;
+        transform: rotate(0deg);
+    }
+}
+
+input[type="radio"] {
+
+    & + label:before {
+        background-color: transparent;
+        content: "";
+        border-radius: 50%;
+        -webkit-box-shadow: inset 0 0 0 7px #fff;
+        -moz-box-shadow: inset 0 0 0 7px #fff;
+        box-shadow: inset 0 0 0 7px #fff;
+        transition: box-shadow ease-in-out .15s;
+    }
+
+    &:checked + label:before {
+        background-color: $color-primary;
+        border: 1px solid $color-primary;
+        -webkit-box-shadow: inset 0 0 0 3px #fff;
+        -moz-box-shadow: inset 0 0 0 3px #fff;
+        box-shadow: inset 0 0 0 3px #fff;
+    }
+}
+
+//CMB2 forms
+.cmb-form {
+
+    .cmb2-metabox  {
+        @extend .box;
+        display: table;
+        width: 100%;
+    }
+
+    .cmb-row {
+        background-color: 0;
+        //display: table-row;
+    }
+
+    .cmb-th, .cmb-td {
+        float: none !important;
+        padding: 20px !important;
+    }
+
+    .cmb-th {
+        display: table-cell;
+        padding: 0;
+        vertical-align: middle !important;
+
+        label {
+            margin-bottom: 0;
+        }
+    }
+
+    .cmb-td {
+        display: table-cell;
+        width: 75%;
+    }
+
+    .cmb2_textarea {
+        height: 150px;
+        padding: 15px;
+        width: 100%;
+    }
+
+    .cmb2-media-status {
+        clear: both;
+    }
+
+    .cmb-attach-list {
+        padding: 0;
+    }
+
+    .cmb2-list {
+        li {
+            float: left;
+            margin: 0 0 20px 0 !important;
+            width: 33%;
+        }
+    }
+
+    .cmb2-remove-file-button {
+        display: inline-block;
+        font-size: 0;
+        text-align: center;
+        width: 100%;
+
+        &:after {
+            color: #FA2A00;
+            content: "\f00d";
+            font-family: fontawesome;
+            font-size: 14px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        &:hover {
+            text-decoration: none;
+        }
+    }
+
+    .img-status {
+        float: left;
+        list-style: none;
+        margin: 15px 15px 0 0;
+        position: relative;
+    }
+
+    input[type=text], input[type=email], textarea {
+        @extend .form-control;
+    }
+
+    .cmb2-wrap input.cmb2-upload-file {
+        float: left !important;
+        font-size: 12px;
+        width: 70% !important;
+
+        @media (max-width: $screen-md-max) and (min-width: $screen-md-min) {
+            width: 60% !important;
+        }
+
+        @media (max-width: $screen-sm-max) {
+            width: 100% !important;
+        }
+    }
+
+    .cmb2-upload-button {
+        margin: 0 !important;
+        padding: 14px 12px !important;
+
+        @media (max-width: $screen-sm-max) {
+            float: left !important;
+            margin-top: 10px !important;
+        }
+    }
+
+    .cmb2-checkbox-list {
+        margin: 0;
+        padding: 0;
+
+        li {
+            @extend .checkbox;
+
+            label {
+                font-size: 11px;
+                font-weight: 600;
+                padding-left: 30px;
+            }
+        }
+    }
+
+    .cmb-multicheck-toggle {
+        background-color: lighten($color-gray, 3%);
+        color: $color-black;
+        cursor: pointer;
+        display: inline-block;
+        margin: 0 0 10px 0;
+        padding: 6px 12px;
+        transition: all linear .15s;
+
+        &:hover {
+            background-color: $color-primary;
+            color: #fff;
+        }
+    }
+
+    .cmb-type-pw-map .map {
+        border: 0;
+        height: 250px;
+        width: 100%;
+    }
+
+    .button-primary {
+        display: block;
+        margin: 0 auto;
+        width: auto;
+    }
+
+    input[type=submit], input[type=button] {
+        @extend .btn-filled;
+        padding: 11px 20px 11px !important;
+    }
+
+    input[type=text] + input[type=button] {
+        float: right;
+        width: auto;
+    }
+
+    .cmb2-metabox-description {
+        font-style: italic;
+        color: gray;
+        margin-top: 5px;
+        font-size: 13px;
+    }
+
+    input[type=text].pw-map-latitude {
+        float: left;
+        width: 48%;
+    }
+
+    input[type=text].pw-map-longitude {
+        float: right;
+        width: 48%;
+    }
+
+    .pw-map {
+        margin: 20px 0;
+        width: 100%;
+    }
+
+    .cmb-repeat-group-wrap {
+        h2 {
+            font-size: 14px;
+            font-weight: bold;
+            margin: 0;
+            padding: 0;
+        }
+
+        .cmb-group-title {
+            cursor: pointer;
+        }
+
+        .cmb-th {
+            padding: 10px 0 !important;
+        }
+
+        .cmb-td {
+            padding: 0 20px 0 0 !important;
+        }
+
+        .cmb-repeatable-grouping .cmb-nested .cmb-row {
+            float: left;
+            border-bottom: 0 !important;
+            margin: 0;
+
+            .cmb-th {
+                padding: 20px 20px 20px 0 !important;
+            }
+        }
+
+        .cmb-remove-row {
+            display: none;
+        }
+
+        .cmb-repeatable-grouping .cmb-group-title {
+            min-height: 2.7em;
+        }
+
+        .cmb-repeat-group-field {
+            padding: 0;
+        }
+
+        .cmb-remove-group-row {
+            margin-bottom: 0;
+        }
+    }
+}
+
+.wpcf7-form {
+    margin: 10px 0 30px;
+
+    .wpcf7-form-control-wrap {
+        width: 100%;
+    }
+
+    input[type='text'], input[type='email'], textarea {
+        @extend .form-control;
+        margin-bottom: 30px;
+    }
+
+    span {
+        bottom: -4px;
+        color: $alert-danger-bg;
+        display: inline-block;
+        font-size: 20px;
+        line-height: 0;
+        position: relative;
+    }
+}

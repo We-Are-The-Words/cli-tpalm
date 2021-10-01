@@ -1,0 +1,75 @@
+.agency-detail {
+    margin-bottom: 30px;
+}
+
+.agency-detail-picture {
+    border: 1px solid $color-gray;
+    padding: 15%;
+    text-align: center;
+
+    &:hover a, a {
+        overflow: visible;
+    }
+
+    img {
+        width: auto;
+    }
+}
+
+.agency-detail {
+    .social {
+        li {
+            &:first-child {
+                margin-left: 0px;
+            }
+        }
+    }
+}
+
+.agency-contact-information {
+    margin-bottom: 10px;
+    padding: 20px 0px;
+
+    dt, dd {
+        font-size: 13px;
+        float: left;
+    }
+
+    dt {
+        margin-right: 15px;
+        text-align: center;
+        width: 20px;
+    }
+}
+
+#simple-map {
+    height: 300px;
+
+    .simple-marker {
+        background-color: $color-primary;
+        box-shadow: 0px 1px 2px 1px rgba(0,0,0,.18);
+        border-radius: 50%;
+        height: 50px;
+        margin-top: 25px;
+        text-align: center;
+        transition: all ease-in-out .2s;
+        width: 50px;
+        position: relative;
+
+        &:before {
+            color: #fff;
+            content: "\f015";
+            font-family: fontawesome;
+            font-size: 24px;
+            margin-top: 14px;
+            display: inline-block;
+            position: relative;
+            transition: all ease-in-out .2s;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        &:hover {
+            transform: scale(1.2);
+        }
+    }
+}

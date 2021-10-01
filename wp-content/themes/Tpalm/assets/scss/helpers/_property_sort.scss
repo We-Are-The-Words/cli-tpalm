@@ -1,0 +1,61 @@
+.properties-sort {
+    @extend .clearfix;
+    background-color: #f4f4f4;
+    margin-bottom: 30px;
+    padding: 30px 30px 23px;
+
+    .properties-filter-sort-title, .properties-filter-sort-by-wrapper, .properties-filter-sort-order-wrapper {
+        display: inline-block;
+    }
+
+    .properties-filter-sort-by-wrapper, .properties-filter-sort-order-wrapper {
+        float: right;
+        width: 30%;
+        margin-left: 20px;
+        margin-top: -8px;
+    }
+
+    h3 {
+        font-size: 18px;
+        margin: 0px;
+    }
+
+    .bootstrap-select.btn-group.open .dropdown-toggle {
+        background-color: #fff;
+    }
+
+    .dropdown-toggle {
+        background-color: #fff;
+    }
+
+    li a {
+        transition: all linear .15s;
+    }
+
+    .properties-filter-sort-title {
+        font-weight: 400;
+        float: left;
+
+        @media(max-width: $screen-sm-max) {
+            display: block;
+            margin-bottom: 30px;
+            width: 100%;
+        }
+    }
+
+    .properties-filter-sort-by-wrapper {
+        @media(max-width: $screen-sm-max) {
+            float: left;
+            margin: 0px;
+            width: 48%;
+        }
+    }
+
+    .properties-filter-sort-order-wrapper {
+        @media(max-width: $screen-sm-max) {
+            float: right;
+            margin: 0px;
+            width: 48%;
+        }
+    }
+}

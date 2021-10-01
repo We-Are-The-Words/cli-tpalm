@@ -1,0 +1,17 @@
+.portfolio-item .image .overlay .links {
+	position: relative;
+	.self-link {
+		position: absolute !important;
+		top: 0 !important;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		z-index: 5;
+		&:before {
+			content: none !important;
+		}
+	}
+	.icon.share {
+		display: none !important;
+	}
+}

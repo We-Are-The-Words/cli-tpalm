@@ -1,0 +1,100 @@
+.content {
+    .post-date {
+        position: absolute;
+        text-align: center;
+        width: 60px;
+
+        i {
+            color: $color-primary;
+            display: block;
+            font-size: 16px;
+        }
+
+        .post-month {
+            color: $color-primary;
+            font-size: 18px;
+            margin-top: 6px;
+        }
+
+        .post-day {
+            font-size: 26px;
+            font-weight: 700;
+            margin-top: 4px;
+        }
+
+        @media (max-width: $screen-xs-max) {
+            width: 50px;
+
+            .post-month {
+                font-size: 16px;
+            }
+
+            .post-day {
+                font-size: 20px;
+            }
+        }
+    }
+
+    .post-thumbnail {
+        @extend .helper-image-hover;
+        margin-left: 80px;
+
+        img {
+            width: 100%;
+        }
+
+        @media (max-width: $screen-xs-max) {
+            margin-left: 60px;
+        }
+    }
+
+    .post-tags {
+        color: $color-gray;
+        margin-top: -15px;
+
+        i {
+            margin-right: 8px;
+        }
+    }
+
+    .post-row {
+        padding-bottom: 30px;
+    }
+
+    .post-data {
+        margin-left: 80px;
+
+        @media (max-width: $screen-sm-max) and (min-width: $screen-sm-min) {
+            h2 {
+                font-size: 24px;
+            }
+        }
+
+        @media (max-width: $screen-xs-max) {
+            margin-left: 60px;
+            margin-top: 20px;
+        }
+    }
+
+    .col-sm-8 .post-data {
+        margin-left: 0px;
+
+        @media (max-width: $screen-xs-max) {
+            margin-left: 60px;
+        }
+    }
+}
+
+.posts .post {
+    .content-wrapper > .content {
+        border-bottom: 1px solid rgba(0,0,0,.1);
+        margin-bottom: 30px;
+    }
+
+    &:last-of-type {
+        .content-wrapper > .content {
+            border-bottom: none;
+            margin-bottom: 0px;
+        }
+    }
+}

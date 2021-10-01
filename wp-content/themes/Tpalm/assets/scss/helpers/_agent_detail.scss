@@ -1,0 +1,55 @@
+.agent-contact-information {
+    margin-bottom: 10px;
+    overflow: hidden;
+    padding: 20px 0px;
+
+    dt, dd {
+        font-size: 13px;
+        float: left;
+    }
+
+    dt {
+        margin-right: 15px;
+        text-align: center;
+        width: 20px;
+    }
+}
+
+.agent-detail {
+    margin-bottom: 30px;
+}
+
+.agent-detail-picture {
+    border: 1px solid $color-gray;
+    padding: 1px;
+
+    img {
+        width: 100%;
+        height: auto;
+    }
+}
+
+.agent-detail {
+    .social {
+        li {
+            &:first-child {
+                margin-left: 0px;
+            }
+        }
+    }
+
+    > .row > .col-sm-3 {
+        overflow: hidden;
+    }
+}
+
+.agent-contact-form .btn {
+    background-color: $color-primary;
+    border: none;
+    color: #fff;
+    transition: all linear .15s;
+
+    &:hover {
+        background-color: darken($color-primary, 5%);
+    }
+}

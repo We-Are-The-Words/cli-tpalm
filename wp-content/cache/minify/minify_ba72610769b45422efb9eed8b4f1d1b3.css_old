@@ -1,0 +1,13 @@
+			@font-face {
+				font-family: 'tpalm';
+				font-style: normal;
+				src: url('/wp-content/uploads/useanyfont/161219071834tpalm.eot');
+				src: local('tpalm'), url('/wp-content/uploads/useanyfont/161219071834tpalm.eot') format('embedded-opentype'), url('/wp-content/uploads/useanyfont/161219071834tpalm.woff') format('woff');
+			}
+            
+            .tpalm{font-family: 'tpalm' !important;}
+            
+						h1, h2, h3, h4, h5, h6, p{
+					font-family: 'tpalm' !important;
+				}
+		

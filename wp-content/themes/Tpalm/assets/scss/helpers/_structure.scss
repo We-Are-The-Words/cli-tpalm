@@ -1,0 +1,38 @@
+#page-wrapper {
+    background-color: #fff;
+    box-sizing: border-box;
+	display: table;
+	height: 100%;
+    max-width: 100%;
+	overflow: hidden;
+    position: relative;
+    table-layout: fixed;
+	width: 100%;
+
+    .layout-boxed & {
+        margin: 0px auto;
+        width: auto;
+    }
+}
+
+#header, #main, #footer {
+	display: table-row;
+}
+
+#header, #footer {
+	height: 1px;
+}
+
+.content, .sidebar {
+    margin: 50px 0px;
+}
+
+.content-wrapper {
+    .content {
+        margin: 0px;
+    }
+}
+
+.fa {
+    -webkit-font-smoothing: antialiased;
+}

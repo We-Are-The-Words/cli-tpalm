@@ -1,0 +1,42 @@
+$image_path: '../img/';
+
+@import '../libraries/bootstrap/assets/stylesheets/bootstrap';
+
+@import 'helpers/colors';
+@import 'helpers/structure';
+@import 'helpers/elements';
+@import 'helpers/buttons';
+@import 'helpers/forms';
+@import 'helpers/widgets';
+@import 'helpers/panels';
+@import 'helpers/pagination';
+@import 'helpers/tables';
+@import 'helpers/header';
+@import 'helpers/footer';
+@import 'helpers/property_detail';
+@import 'helpers/property_box';
+@import 'helpers/property_row';
+@import 'helpers/property_gallery';
+@import 'helpers/property_sort';
+@import 'helpers/property_map';
+@import 'helpers/property_small';
+@import 'helpers/property_carousel';
+@import 'helpers/property_list';
+@import 'helpers/property_slider';
+@import 'helpers/colorbox';
+@import 'helpers/comments';
+@import 'helpers/agent_row';
+@import 'helpers/agent_box';
+@import 'helpers/agent_detail';
+@import 'helpers/agent_small';
+@import 'helpers/agency_row';
+@import 'helpers/agency_detail';
+@import 'helpers/tabs';
+@import 'helpers/pricing';
+@import 'helpers/post_row';
+@import 'helpers/payment';
+@import 'helpers/commons';
+
+.screen-reader-text {
+  display: none;
+}

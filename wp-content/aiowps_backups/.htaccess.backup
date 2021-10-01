@@ -1,0 +1,115 @@
+# BEGIN BAPTISTE
+<IfModule mod_expires.c>
+ExpiresActive On
+ExpiresByType application/vnd.ms-fontobject "access plus 1 year"
+ExpiresByType application/x-font-ttf "access plus 1 year"
+ExpiresByType application/x-font-opentype "access plus 1 year"
+ExpiresByType application/x-font-woff "access plus 1 year"
+ExpiresByType image/svg+xml "access plus 1 year"
+ExpiresByType image/gif "access plus 6 month"
+ExpiresByType image/jpg "access plus 6 month"
+ExpiresByType image/jpeg "access plus 6 month"
+ExpiresByType image/png "access plus 6 month"
+ExpiresByType text/javascript "access plus 2 month"
+ExpiresByType text/css "access plus 2 month"
+ExpiresByType application/javascript "access plus 2 month"
+</IfModule>
+
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteBase /
+
+# Added by eTeamsys
+RewriteRule 37-Maison-a-renover/index.html http://tpalm.be/fr/renovation/? [L,NC,R=301]
+RewriteRule 37-maison-a-renover/39-maison-a-renover.html http://tpalm.be/fr/renovation/? [L,NC,R=301]
+RewriteRule 37-maison-a-renover/38-maison-a-renover.html http://tpalm.be/fr/renovation/? [L,NC,R=301]
+RewriteRule 37-maison-a-renover/40-maison-a-renover.html http://tpalm.be/fr/renovation/? [L,NC,R=301]
+RewriteRule 1-maison-passive/2-maison-passive.html http://tpalm.be/fr/construire/maison-cle-sur-porte/maison-passive/? [L,NC,R=301]
+RewriteRule 1-maison-passive/3-maison-passive.html http://tpalm.be/fr/construire/maison-cle-sur-porte/maison-passive/? [L,NC,R=301]
+RewriteRule 1-maison-passive/4-maison-passive.html http://tpalm.be/fr/construire/maison-cle-sur-porte/maison-passive/? [L,NC,R=301]
+RewriteRule 5-entreprise-generale-de-construction/index.html http://tpalm.be/fr/entreprise-de-construction/? [L,NC,R=301]
+RewriteRule 5-entreprise-generale-de-construction/6-entreprise-generale-de-construction.html http://tpalm.be/fr/entreprise-de-construction/? [L,NC,R=301]
+RewriteRule 5-entreprise-generale-de-construction/7-entreprise-generale-de-construction.html http://tpalm.be/fr/entreprise-de-construction/? [L,NC,R=301]
+RewriteRule 5-entreprise-generale-de-construction/8-entreprise-generale-de-construction.html http://tpalm.be/fr/entreprise-de-construction/? [L,NC,R=301]
+RewriteRule 9-maison-passive-belgique/10-maison-passive-belgique.html http://tpalm.be/fr/construction-maison-passive-belgique/? [L,NC,R=301]
+RewriteRule 9-maison-passive-belgique/index.html http://tpalm.be/fr/construction-maison-passive-belgique/? [L,NC,R=301]
+RewriteRule 9-maison-passive-belgique/11-maison-passive-belgique.html http://tpalm.be/fr/construction-maison-passive-belgique/? [L,NC,R=301]
+RewriteRule 9-maison-passive-belgique/12-maison-passive-belgique.html http://tpalm.be/fr/construction-maison-passive-belgique/? [L,NC,R=301]
+RewriteRule 13-maison-clef-sur-porte-belgique/index.html http://tpalm.be/fr/construire/maison-cle-sur-porte/? [L,NC,R=301]
+RewriteRule 13-maison-clef-sur-porte-belgique/14-maison-clef-sur-porte-belgique.html http://tpalm.be/fr/construire/maison-cle-sur-porte/? [L,NC,R=301]
+RewriteRule 13-maison-clef-sur-porte-belgique/15-maison-clef-sur-porte-belgique.html http://tpalm.be/fr/construire/maison-cle-sur-porte/? [L,NC,R=301]
+RewriteRule 13-maison-clef-sur-porte-belgique/16-maison-clef-sur-porte-belgique.html http://tpalm.be/fr/construire/maison-cle-sur-porte/? [L,NC,R=301]
+RewriteRule 21-entreprise-construction-liege/22-entreprise-construction-liege.html http://tpalm.be/fr/entreprise-de-construction-liege/? [L,NC,R=301]
+RewriteRule 21-entreprise-construction-liege/index.html http://tpalm.be/fr/entreprise-de-construction-liege/? [L,NC,R=301]
+RewriteRule 21-entreprise-construction-liege/23-entreprise-construction-liege.html http://tpalm.be/fr/entreprise-de-construction-liege/? [L,NC,R=301]
+RewriteRule 21-entreprise-construction-liege/24-entreprise-construction-liege.html http://tpalm.be/fr/entreprise-de-construction-liege/? [L,NC,R=301]
+RewriteRule 25-entreprise-construction-namur/26-entreprise-construction-namur.html http://tpalm.be/fr/entreprise-de-construction-namur/? [L,NC,R=301]
+RewriteRule 25-entreprise-construction-namur/27-entreprise-construction-namur.html http://tpalm.be/fr/entreprise-de-construction-namur/? [L,NC,R=301]
+RewriteRule 25-entreprise-construction-namur/28-entreprise-construction-namur.html http://tpalm.be/fr/entreprise-de-construction-namur/? [L,NC,R=301]
+RewriteRule 25-entreprise-construction-namur/index.html http://tpalm.be/fr/entreprise-de-construction-namur/? [L,NC,R=301]
+RewriteRule 29-renovation-maison-ancienne/index.html http://tpalm.be/fr/renovation/? [L,NC,R=301]
+RewriteRule 29-renovation-maison-ancienne/30-renovation-maison-ancienne.html http://tpalm.be/fr/renovation/? [L,NC,R=301]
+RewriteRule 29-renovation-maison-ancienne/31-renovation-maison-ancienne.html http://tpalm.be/fr/renovation/? [L,NC,R=301]
+RewriteRule 29-renovation-maison-ancienne/32-renovation-maison-ancienne.html http://tpalm.be/fr/renovation/? [L,NC,R=301]
+RewriteRule 33-renover-sa-maison/index.html http://tpalm.be/fr/renovation/? [L,NC,R=301]
+RewriteRule 33-renover-sa-maison/34-renover-sa-maison.html http://tpalm.be/fr/renovation/? [L,NC,R=301]
+RewriteRule 33-renover-sa-maison/35-renover-sa-maison.html http://tpalm.be/fr/renovation/? [L,NC,R=301]
+RewriteRule 33-renover-sa-maison/36-renover-sa-maison.html http://tpalm.be/fr/renovation/? [L,NC,R=301]
+RewriteRule 17-entreprise-construction-hainaut/19-entreprise-construction-hainaut.html http://tpalm.be/fr/entreprise-de-construction-hainaut/? [L,NC,R=301]
+RewriteRule 17-entreprise-construction-hainaut//index.html http://tpalm.be/fr/entreprise-de-construction-hainaut/? [L,NC,R=301]
+
+RewriteRule ^([0-9]{1,3})-([^/]+)/index.html$ /et/client.php?mkw=$1 [L]
+RewriteRule ^([0-9]{1,3})-([^/]+)/([0-9]{1,3})-([^/]+).html$ /et/client.php?mkw=$3 [L]
+# End eTeamsys
+
+redirect 301 /nous-construisons/ /fr/construire/
+redirect 301 /realisations/ /fr/nos-realisations/
+redirect 301 /jobs/ /fr/offres-d-emploi
+redirect 301 /coordonnees-t-palm/ /fr/contact
+redirect 301 /nous-construisons/construction-dimmeubles-appartements/ /fr/investir/immeuble-a-appartements/
+redirect 301 /economie-d-energie/maison-basse-energie/ /fr/construire/maison-basse-energie/
+redirect 301 /contact /fr/contact
+#redirect 301 /37-Maison-a-renover/index.html /fr/renovation/
+
+
+
+
+RewriteCond %{REQUEST_URI} ^/nous-construisons/renovations$
+RewriteRule .* /fr/renovation/ [R=302,L]
+
+RewriteCond %{REQUEST_URI} ^(/2017){0,1}/{0,1}$
+RewriteRule .* %1/fr/ [R=301,L]
+
+RewriteCond %{REQUEST_URI} ^/fr/page/$
+RewriteRule .* /fr/ [R=301,L]
+RewriteCond %{REQUEST_URI} ^/fr/page/$
+RewriteRule .* /fr/ [R=301,L]
+
+# add a trailing slash to /wp-admin
+RewriteRule ^([_0-9a-zA-Z-]+/)?wp-admin$ $1wp-admin/ [R=301,L]
+
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?(wp-(content|admin|includes).*) $2 [L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?(.*\.php)$ $2 [L]
+RewriteRule . index.php [L]
+
+</IfModule>
+# END BAPTISTE
+
+
+
+
+# BEGIN WordPress
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteBase /
+RewriteRule ^index\.php$ - [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /index.php [L]
+</IfModule>
+
+# END WordPress
+

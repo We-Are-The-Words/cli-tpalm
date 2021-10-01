@@ -1,0 +1,22 @@
+@import 'scss/variables';
+//@import 'scss/fonts/tpalm';
+//@import 'scss/fonts/pictopro';
+@import 'scss/global';
+@import 'scss/layouts/block_promo';
+@import 'scss/layouts/portfolio';
+//@import 'scss/layouts/nav';
+
+
+@import 'scss/views/home';
+@import 'scss/views/responsive';
+
+@import 'scss/fonts/typo';
+@import 'scss/views/fix';
+
+// Import Realia
+@import 'scss/modules/realia/realia';
+/*
+@import 'scss/modules/realia/layouts';
+@import 'scss/modules/realia/forms';
+@import 'scss/modules/realia/properties';
+*/

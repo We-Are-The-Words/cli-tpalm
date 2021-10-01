@@ -1,0 +1,33 @@
+# Translation of Plugins - SEMrush SEO Writing Assistant - Development (trunk) in French (France)
+# This file is distributed under the same license as the Plugins - SEMrush SEO Writing Assistant - Development (trunk) package.
+msgid ""
+msgstr ""
+"PO-Revision-Date: 2019-02-05 07:59:39+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"X-Generator: GlotPress/2.4.0-alpha\n"
+"Language: fr\n"
+"Project-Id-Version: Plugins - SEMrush SEO Writing Assistant - Development (trunk)\n"
+
+#. Author URI of the plugin
+msgid "https://www.semrush.com/"
+msgstr "https://www.semrush.com/"
+
+#. Author of the plugin
+msgid "SEMrush"
+msgstr "SEMrush"
+
+#. Description of the plugin
+msgid "The SEMrush SEO Writing Assistant provides instant recommendations for content optimization based on the best-performing articles in the Google top-10."
+msgstr "SEMrush SEO Writing Assistant fournit des recommandations instantanées pour l’optimisation du contenu basé sur les articles les plus performants dans le top 10 de Google."
+
+#. Plugin URI of the plugin
+msgid "https://www.semrush.com/swa/"
+msgstr "https://www.semrush.com/swa/"
+
+#. Plugin Name of the plugin
+#: admin/class-semrushswa-metabox.php:67
+msgid "SEMrush SEO Writing Assistant"
+msgstr "SEMrush SEO Writing Assistant"

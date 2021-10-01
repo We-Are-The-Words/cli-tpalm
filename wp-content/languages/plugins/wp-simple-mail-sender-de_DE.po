@@ -1,0 +1,76 @@
+# Translation of Plugins - WP Simple Mail Sender - Stable (latest release) in German
+# This file is distributed under the same license as the Plugins - WP Simple Mail Sender - Stable (latest release) package.
+msgid ""
+msgstr ""
+"PO-Revision-Date: 2018-02-02 00:38:04+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: GlotPress/2.4.0-alpha\n"
+"Language: de\n"
+"Project-Id-Version: Plugins - WP Simple Mail Sender - Stable (latest release)\n"
+
+#. Author URI of the plugin/theme
+msgid "http://tmeister.net"
+msgstr "http://tmeister.net"
+
+#. Author of the plugin/theme
+msgid "Enrique Chavez"
+msgstr "Enrique Chavez"
+
+#. Description of the plugin/theme
+msgid "WP Simple Mail Sender is a very simple plugin to change the sender address and name in outgoing emails, you can use the Site Title and the Admin Email or custom values."
+msgstr "WP Simple Mail Sender ist ein sehr einfaches Plugin, mit dem die Absender-Adresse und der Name ausgehender E-Mails geändert werden kann. Es können der Website-Titel und die Administrator-E-Mail oder individuell festgelegte Werte verwendet werden."
+
+#. Plugin URI of the plugin/theme
+msgid "https://wordpress.org/plugins/wp-simple-mail-sender"
+msgstr "https://wordpress.org/plugins/wp-simple-mail-sender"
+
+#. Plugin Name of the plugin/theme
+msgid "WP Simple Mail Sender"
+msgstr "WP Simple Mail Sender"
+
+#: admin/class-wp-simple-mail-sender-admin.php:247
+msgid "If this option is selected the values in the fields below will be ignored."
+msgstr "Falls diese Option gewählt wird, werden die eingegeben Werte in den Eingabefeldern unten ignoriert."
+
+#: admin/class-wp-simple-mail-sender-admin.php:240
+msgid "Check this option to use the \"Site Title\" and the \"E-mail Address\" settings from the <a href=\"%s\">General Options</a>."
+msgstr "Durch markieren dieser Option, werden der „Website-Titel“ und die „E-Mail-Adresse“ aus den <a href=\"%s\">Allgemeinen Einstellungen</a> übernommen."
+
+#: admin/class-wp-simple-mail-sender-admin.php:226
+msgid "Ex. my@email.com"
+msgstr "mir@meine-domain.de, z.B."
+
+#: admin/class-wp-simple-mail-sender-admin.php:213
+msgid "Ex. John Doe."
+msgstr "Wapuu Wunder, z.B."
+
+#: admin/class-wp-simple-mail-sender-admin.php:201
+msgid "This is a very simple plugin to change the sender address and name when WordPress send an email."
+msgstr "Ein sehr einfaches Plugin, mit dem die Absender-Adresse und der Name bei E-Mails geändert werden kann, wenn WordPress eine E-Mail versendet."
+
+#: admin/class-wp-simple-mail-sender-admin.php:187
+msgid "From Address"
+msgstr "Von Adresse"
+
+#: admin/class-wp-simple-mail-sender-admin.php:179
+msgid "From Name"
+msgstr "Von Name"
+
+#: admin/class-wp-simple-mail-sender-admin.php:171
+msgid "General Settings"
+msgstr "Allgemeine Einstellungen"
+
+#: admin/class-wp-simple-mail-sender-admin.php:152
+msgid "Settings"
+msgstr "Einstellungen"
+
+#: admin/class-wp-simple-mail-sender-admin.php:126
+msgid "WP Single Email"
+msgstr "WP Simple E-Mail"
+
+#: admin/class-wp-simple-mail-sender-admin.php:125
+msgid "WP Simple Email Sender Settings"
+msgstr "WP Simple E-Mail Sender - Einstellungen"

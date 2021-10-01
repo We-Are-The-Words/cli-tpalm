@@ -1,0 +1,147 @@
+// HEADER : LANGUE
+.wpml-ls {
+  &.wpml-ls-legacy-list-horizontal  {
+  	border: none;
+  	padding: 0;
+  	clear: none;
+  	float: right;
+  }
+}
+.wpml-ls-current-language,
+.wpml-ls-current-language > a {
+  color: $color-brand !important;
+  background: #EEE !important;
+}
+
+.top-area .gem-button {
+	background-color: $color-brand2 !important;
+	padding: 0 20px;
+	display: inline-block;
+	height: 36px;
+	line-height: 36px;
+	margin-top: -4px;
+	font-size: 16px;
+	&:hover,
+	&:focus {
+  	background-color: $color-brand !important;
+	}
+}
+
+
+// LISTING REALIA
+.property-row-more a {
+	background: #93c01f;
+	padding: 7px 14px;
+	margin: 5px 0 0;
+	line-height: 1;
+	display: inline-block;
+	float: right;
+	border-radius: 3px;
+	font-size: 12px;
+	text-transform: uppercase;
+	color: #FFF;
+	&:hover,
+	&:focus {
+  	background: darken(#93c01f,10%);
+		color: #FFF;
+	}
+}
+li#filter_widget-4 .button {
+	width: 185px;
+	padding-left: 0;
+	padding-right: 0;
+}
+.property-container .type-property .wp-post-image {
+	height: auto !important;
+	width: 100% !important;
+}
+
+// LISTING REALISATION
+.portfolio-item {
+  position: relative !important;
+  float: left;
+  margin: 0;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+}
+.portfolio-set {
+  height: inherit !important;
+}
+.gem-pagination {
+  margin-top: 45px !important;
+}
+.portfolio.hover-zooming-blur .portfolio-item .image .overlay .links .caption .title {
+	background: #FFF;
+	padding: 5px 10px;
+	border: 1px solid #0f5c35;
+}
+
+// MENU
+#primary-menu.no-responsive > li {
+  vertical-align: text-top;
+}
+
+// FOOTER 
+#colophon .widget_submenu li,
+#colophon .widget_nav_menu > div > ul li,
+#colophon .widget_archive ul li {
+  	padding: 2px 0;
+}
+#colophon .widget a,
+#colophon .gem-contacts .gem-contacts-item:before {
+	color: #d4dce2;
+}
+
+
+.btn.btn-brand {
+	background-color: #0f5c35;
+	color: white;
+	&:hover,
+	&:focus {
+		background-color: #93c01f;
+	}
+}
+
+
+
+
+// MININAV
+
+#mini_nav .wpb_content_element a {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	vertical-align: text-bottom;
+}
+
+#mini_nav .wpb_content_element a span {
+	position: absolute;
+	bottom: 10px;
+	width: 100%;
+	left: 0;
+	right: 0;
+}
+
+#mini_nav .vc_column-inner {
+	padding-bottom: 45px;
+}
+
+
+
+
+.gem-pp-posts-image img {
+	max-width: inherit;
+}
+
+a.mega-menu-link {
+	text-transform: uppercase !important;
+}
+
+
+
+
+

@@ -1,0 +1,1 @@
+×e.Z<?php exit; ?>a:1:{s:7:"content";s:102:"a:3:{s:11:"Tpalm-child";s:7:"/themes";s:5:"Tpalm";s:7:"/themes";s:15:"twentyseventeen";s:7:"/themes";}";}

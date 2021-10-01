@@ -1,0 +1,78 @@
+.widget_property_carousel_widget {
+
+    .owl-nav {
+        top: 40%;
+        position: absolute;
+        pointer-events: none;
+        width: 100%;
+    }
+
+    .owl-prev, .owl-next {
+        color: transparent;
+        font-size: 0px;
+        display: inline-block;
+        pointer-events: auto;
+
+        &:before {
+            background-color: #fff;
+            border: 2px solid $color-primary;
+            border-radius: 0px;
+            color: $color-primary;
+            display: block;
+            font-family: fontawesome;
+            font-size: 14px;
+            font-weight: bold;
+            padding: 8px 12px;
+            outline: 0px !important;
+            transition: all .15s linear;
+            text-align: center;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        &:hover:before {
+            background-color: $color-primary;
+            color: #fff;
+        }
+    }
+
+    .owl-prev {
+        margin-left: -15px;
+
+        &:before {
+            content: "\f053";
+            padding: 5px 12px 5px 10px;
+        }
+    }
+
+    .owl-next {
+        float: right;
+        margin-right: -15px;
+
+        &:before {
+            content: "\f054";
+            padding: 5px 10px 5px 12px;
+        }
+    }
+
+    .owl-dots {
+        text-align: center;
+
+        .owl-dot {
+            background-color: darken($color-gray, 15%);
+            border-radius: 5px;
+            display: inline-block;
+            height: 8px;
+            margin: 15px 5px 0px;
+            transition: all linear .15s;
+            width: 25px;
+
+            &:hover, &.active {
+                background-color: $color-primary;
+            }
+        }
+    }
+
+    .background-gray .property-box {
+        border: none;
+    }
+}

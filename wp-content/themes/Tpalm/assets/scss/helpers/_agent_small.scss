@@ -1,0 +1,128 @@
+.agent-small {
+    @extend .clearfix;
+    border: 0px;
+    margin-bottom: 10px;
+
+    a {
+        color: $color-black;
+
+        &:hover {
+            text-decoration: none;
+            color: $color-primary;
+        }
+    }
+
+    &:hover {
+        .agent-small-title a {
+            color: $color-primary;
+        }
+    }
+}
+
+.agent-small-inner {
+    padding: 10px;
+}
+
+.agent-small-image {
+    border: none !important;
+    border-radius: 0px;
+    float: left;
+    margin: 0px 20px 0px 0px;
+    overflow: hidden;
+    transition: all linear .15s;
+
+    img {
+        height: auto;
+        width: 60px;
+    }
+}
+
+.agent-small-content {
+    margin-left: 87px;
+}
+
+.agent-small-title {
+    font-size: 14px;
+    margin-bottom: 5px;
+    margin-top: 0px;
+}
+
+.agent-small-email, .agent-small-phone {
+    word-wrap: break-word;
+    font-size: 12px;
+
+    &:before {
+        font-family: fontawesome;
+        margin-right: 8px;
+        font-size: 10px;
+        -webkit-font-smoothing: antialiased;
+    }
+}
+
+.agent-small-phone {
+    font-weight: 300;
+}
+
+.agent-small-email:before {
+    content: "\f0e0";
+}
+
+.agent-small-phone:before {
+    content: "\f095";
+}
+
+.footer .agent-small, .sidebar .agent-small {
+
+
+    &:before {
+        border-left: none;
+    }
+
+    .agent-small-email, .agent-small-phone {
+
+        &:before {
+            color: rgba($color-black, .6);
+        }
+    }
+
+    &:hover {
+        .agent-small-image {
+            background-color: $color-primary;
+            border-color: $color-primary;
+        }
+    }
+}
+
+#footer .agent-small {
+    border-bottom: 1px solid rgba($color-black, .2);
+    margin: 0px;
+
+    .agent-small-title a {
+        color: $color-primary;
+    }
+}
+
+.sidebar {
+    .widget_agent_assigned_widget {
+        .agent-small {
+            margin-left: 30px;
+            margin-right: 30px;
+        }
+    }
+
+    .agent-small {
+        border: 2px solid rgba(0, 0, 0, .1);
+    }
+
+    .agent-small-title a {
+        color: $color-primary;
+
+        &:hover {
+            border-color: $color-primary;
+        }
+    }
+
+    .agent-small-email:before, .agent-small-phone:before {
+        content: none;
+    }
+}

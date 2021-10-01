@@ -1,0 +1,40 @@
+.table {
+    font-size: 14px;
+    .summary {
+      float: right;
+    }
+    thead {
+      tr {
+        th {
+          background-color: #f4f4f4;
+        }
+      }
+    }
+    tbody {
+        tr {
+            th {
+                vertical-align: middle;
+            }
+            td {
+                vertical-align: middle;
+
+                &.min-width {
+                    width: 1px;
+                }
+
+                &.nowrap {
+                    white-space: nowrap;
+                }
+
+                &.lr-padding {
+                    padding-left: 20px;
+                    padding-right: 20px;
+                }
+            }
+        }
+    }
+
+    & > tbody > tr > td {
+        border-top: none;
+    }
+}

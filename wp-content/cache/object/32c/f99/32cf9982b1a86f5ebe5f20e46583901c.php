@@ -1,0 +1,1 @@
+Öe.Z<?php exit; ?>a:1:{s:7:"content";s:194:"a:1:{s:19:"wpml-st-string-scan";a:5:{s:14:"W3 Total Cache";b:1;s:17:"Custom Permalinks";b:1;s:16:"Permalink Editor";b:1;s:27:"WPML Translation Management";b:1;s:21:"Permalinks Customizer";b:1;}}";}
